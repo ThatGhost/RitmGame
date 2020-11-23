@@ -5,7 +5,10 @@
 #pragma region gameFunctions											
 void Start()
 {
-
+	InitializeGameAssets();
+	int score{ 1000 };
+	if (AddScore(score))std::cout << "HighScore\n";
+	else std::cout << "Top 5!\n";
 }
 
 void Draw()

@@ -1,5 +1,4 @@
-﻿  SaveAndLoadManager.cpp
-C:\Users\starg\OneDrive\Documenten\GitHub\game_08\Game_08_IbnZwanckaert_Nathan_SashaVigneron_NathanVerschuere\SaveAndLoadManager.cpp(36,24): warning C4018: '<=': signed/unsigned mismatch
+﻿  Game.cpp
   Game_08_IbnZwanckaert_Nathan_SashaVigneron_NathanVerschuere.vcxproj -> C:\Users\starg\OneDrive\Documenten\GitHub\game_08\Game_08_IbnZwanckaert_Nathan_SashaVigneron_NathanVerschuere\Debug\Game_08_IbnZwanckaert_Nathan_SashaVigneron_NathanVerschuere.exe
   COPY THE DLL FILES
   0 File(s) copied

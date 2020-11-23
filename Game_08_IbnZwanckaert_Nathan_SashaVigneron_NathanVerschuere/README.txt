@@ -85,9 +85,10 @@ bool UIButton(Point2f Pos, Texture* t, bool Active = true);
 -> draws a texture and return true if pressed
 -> default Active parameter controlls the state of the button (if it is able to be pressed)
 
+--------------Save System-------------------
 
-
-
+bool AddScore(int& score);
+-> Voegt score toe in de juiste plaats
 
 
 

@@ -75,8 +75,6 @@ bool AddScore(int& score) {
 }
 
 void InitializeGameAssets() {
-	std::ofstream DataStream{ SavePath };
-	DataStream.close();
-
+	const std::string AssetsPath{"Assets/"};
 }
 

@@ -40,7 +40,7 @@ Point2::Point2(int x, int y)
 // InputS Constructors
 //-----------------------------------------------------------------
 InputS::InputS()
-	: mousePos{}, ClickDown{ ClickState::NA }, ClickUp{ ClickState::NA }
+	: mousePos{}, ClickDown{ ClickState::NA }, ClickUp{ ClickState::NA } // Deliberately not changing to class to prevent extra typing
 {
 }
 

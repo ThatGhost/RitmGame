@@ -17,10 +17,10 @@ void Draw()
 	switch (g_Scene)
 	{
 	case 0:
-		Menu_Scene();
+		g_MainGame.Draw();
 		break;
 	case 1:
-		Main_Game();
+		g_MainMenu.Draw();
 		break;
 	}
 }
@@ -37,11 +37,5 @@ void End()
 #pragma endregion gameFunctions
 
 #pragma region ownDefinitions
-void Menu_Scene() {
-
-}
-void Main_Game() {
-
-}
 
 #pragma endregion ownDefinitions

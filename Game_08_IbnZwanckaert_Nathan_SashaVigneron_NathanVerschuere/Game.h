@@ -5,8 +5,8 @@ using namespace utils;
 std::string g_WindowTitle{ "Name Project - Name, Firstname - 1DAExx" };
 InputS Input{};
 // Change the window dimensions here
-float g_WindowWidth{ 1024 };
-float g_WindowHeight{ 768 };
+float g_WindowWidth{ 1280 };
+float g_WindowHeight{ 720 };
 #pragma endregion gameInformation
 
 
@@ -14,9 +14,9 @@ float g_WindowHeight{ 768 };
 #pragma region ownDeclarations
 // Declare your own global variables here
 INT8 g_Scene{};
+Menu g_MenuClass{};
+GameMain g_GameClass{};
 // Declare your own functions here
-void Menu_Scene();
-void Main_Game();
 #pragma endregion ownDeclarations
 
 #pragma region gameFunctions											

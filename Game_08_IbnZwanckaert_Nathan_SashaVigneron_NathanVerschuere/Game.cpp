@@ -20,7 +20,6 @@ void Draw()
 		Main_Game();
 		break;
 	}
-	if (Input.keyDown == 'q')std::cout << Input.keyDownTime << "\n";
 }
 
 void Update(float elapsedSec)

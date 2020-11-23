@@ -43,6 +43,7 @@ struct InputS {
 	};
 	ClickState ClickDown;
 	ClickState ClickUp;
+	float keyDownTime;
 };
 
 

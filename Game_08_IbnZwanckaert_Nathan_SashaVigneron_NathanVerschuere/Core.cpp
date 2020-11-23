@@ -187,7 +187,11 @@ void Run()
 
 			//input reset
 			{
-				if(Input.KeyUp==0)Input.keyDown = 0;
+				if (Input.keyDown != 0)Input.keyDownTime += elapsedSeconds;
+				if (Input.keyUp != 0) {
+					Input.keyDown = 0;
+					Input.keyDownTime = 0;
+				}
 				Input.keyUp = 0;
 				Input.ClickDown = Input.ClickState::NA;
 				Input.ClickUp = Input.ClickState::NA;

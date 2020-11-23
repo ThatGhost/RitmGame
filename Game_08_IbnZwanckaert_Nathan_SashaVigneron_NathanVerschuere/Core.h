@@ -2,7 +2,7 @@
 
 #pragma region coreDeclarations
 // Functions
-void Initialize();
+void Initzialize();
 void Run();
 void Cleanup();
 void QuitOnSDLError();

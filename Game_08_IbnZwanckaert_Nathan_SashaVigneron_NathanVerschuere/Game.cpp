@@ -5,7 +5,7 @@
 #pragma region gameFunctions											
 void Start()
 {
-	
+
 }
 
 void Draw()

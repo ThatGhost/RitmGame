@@ -33,7 +33,7 @@ std::vector<AllData> g_UIData{};
 #pragma region coreImplementations
 
 
-void Initialize()
+void Initzialize()
 {
 	
 	//Initialize SDL

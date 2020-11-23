@@ -13,7 +13,7 @@ int main(int argc, char* args[])
 	srand(unsigned int(time(nullptr)));
 
 	// Initialize SDL and OpenGL in core.cpp
-	Initialize();
+	Initzialize();
 
 	// Event loop
 	Run();

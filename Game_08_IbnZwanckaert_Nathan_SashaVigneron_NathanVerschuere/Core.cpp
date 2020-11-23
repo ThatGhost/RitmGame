@@ -20,6 +20,16 @@ extern InputS Input;
 
 #pragma endregion windowInformation
 
+#pragma region UIElements
+UIRect g_UiRect{};
+UIElip g_UiElip{};
+UITria g_UiTria{};
+UItext g_UiText{};
+
+std::vector<AllData> g_UIData{};
+#pragma endregion UIElements
+
+
 #pragma region coreImplementations
 
 
@@ -108,6 +118,7 @@ extern void Start();
 extern void Update(float elapsedSec);
 extern void Draw();
 extern void End();
+void DrawUI();
 
 void Run()
 {
@@ -184,6 +195,7 @@ void Run()
 
 			// Draw in the back buffer
 			Draw();
+			DrawUI();
 
 			//input reset
 			{
@@ -193,7 +205,7 @@ void Run()
 					Input.keyDownTime = 0;
 				}
 				Input.keyUp = 0;
-				Input.ClickDown = Input.ClickState::NA;
+				if(Input.ClickUp != 0)Input.ClickDown = Input.ClickState::NA;
 				Input.ClickUp = Input.ClickState::NA;
 			}
 
@@ -202,6 +214,22 @@ void Run()
 		}
 	}
 	End();
+}
+
+
+void DrawUI() {
+	for (size_t i = 0; i < g_UIData.size(); i++)
+	{
+		g_UIData[i].p->c = g_UIData[i].c;
+		g_UIData[i].p->Size = g_UIData[i].Size;
+		g_UIData[i].p->Pos = g_UIData[i].Pos;
+		g_UIData[i].p->Pos2 = g_UIData[i].Pos2;
+		g_UIData[i].p->Pos3 = g_UIData[i].Pos3;
+		g_UIData[i].p->t = g_UIData[i].t;
+		g_UIData[i].p->r = g_UIData[i].r;
+		g_UIData[i].p->Draw();
+	}
+	g_UIData.clear();
 }
 
 void Cleanup()

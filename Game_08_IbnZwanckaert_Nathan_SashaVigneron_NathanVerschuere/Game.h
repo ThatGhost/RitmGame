@@ -1,5 +1,6 @@
 #pragma once
 using namespace utils;
+using namespace UI;
 #pragma region gameInformation
 // Set your name and group in the title here
 std::string g_WindowTitle{ "Name Project - Name, Firstname - 1DAExx" };

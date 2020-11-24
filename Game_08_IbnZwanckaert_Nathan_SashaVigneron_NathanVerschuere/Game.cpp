@@ -7,6 +7,8 @@
 void Start()
 {
 	InitializeGameAssets();
+	g_MainGame.Start();
+	g_MainMenu.Start();
 }
 
 void Draw()
@@ -25,11 +27,14 @@ void Draw()
 
 void Update(float elapsedSec)
 {
-
+	g_MainGame.Update(elapsedSec);
+	g_MainMenu.Update(elapsedSec);
 }
 
 void End()
 {
+	g_MainGame.End();
+	g_MainMenu.End();
 	DeleteGameAssets();
 }
 #pragma endregion gameFunctions

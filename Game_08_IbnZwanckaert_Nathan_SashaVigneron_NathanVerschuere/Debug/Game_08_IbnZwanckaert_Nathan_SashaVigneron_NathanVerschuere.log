@@ -1,5 +1,15 @@
-﻿  MainGame.cpp
-  Game_08_IbnZwanckaert_Nathan_SashaVigneron_NathanVerschuere.vcxproj -> C:\Users\starg\OneDrive\Documenten\GitHub\game_08\Game_08_IbnZwanckaert_Nathan_SashaVigneron_NathanVerschuere\Debug\Game_08_IbnZwanckaert_Nathan_SashaVigneron_NathanVerschuere.exe
+﻿  pch.cpp
+  Core.cpp
+  Game.cpp
+  main.cpp
+  MainGame.cpp
+  SaveAndLoadManager.cpp
+C:\Users\sasha\Desktop\Game_08\Game_08_IbnZwanckaert_Nathan_SashaVigneron_NathanVerschuere\SaveAndLoadManager.cpp(101,20): warning C4018: '<': signed/unsigned mismatch
+  structs.cpp
+  UIElements.cpp
+  utils.cpp
+  Generating Code...
+  Game_08_IbnZwanckaert_Nathan_SashaVigneron_NathanVerschuere.vcxproj -> C:\Users\sasha\Desktop\Game_08\Game_08_IbnZwanckaert_Nathan_SashaVigneron_NathanVerschuere\Debug\Game_08_IbnZwanckaert_Nathan_SashaVigneron_NathanVerschuere.exe
   COPY THE DLL FILES
   0 File(s) copied
   0 File(s) copied

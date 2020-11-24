@@ -27,10 +27,13 @@ private:
 	const float m_TrackBorder{ 60 };
 	const float m_TrackWidth{ 1280 - (2 * m_TrackBorder) };
 
+	void UpdateDucks();
+	void CheckDucks();
+
 	void DrawDucks(const int array[]);
 	void DrawGrid(Point2f startPos, float width, float height, int gridSize);
 	void DrawTrack();
-	void UpdateDucks();
+
 	void Swap(int array[], int idx1, int idx2);
 
 

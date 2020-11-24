@@ -26,6 +26,28 @@ void MainGame::SpawnDuck()
 {
 	m_DuckArray[g_DuckArraySize - 1] = 1;
 }
+void MainGame::UpdateDucks()
+{
+	for (int i = 0; i < g_DuckArraySize; i++)
+	{
+		if (i == g_DuckArraySize - 1)
+		{
+			m_DuckArray[i] = 0;
+			return;
+		}
+		Swap(m_DuckArray, i, i + 1);
+	}
+}
+void MainGame::CheckDucks() 
+{
+
+	if (m_DuckArray[1] == 1) 
+	{
+		m_DuckArray[1] == 0;
+		// AND PUNISH PLAYER
+	}
+
+}
 
 void MainGame::DrawTrack()
 {
@@ -70,18 +92,6 @@ void MainGame::DrawDucks(const int array[])
 	}
 }
 
-void MainGame::UpdateDucks() 
-{
-	for (int i = 0; i < g_DuckArraySize; i++)
-	{
-		if (i == g_DuckArraySize - 1) 
-		{ 
-			m_DuckArray[i] = 0;
-			return; 
-		}
-		Swap(m_DuckArray, i, i + 1);
-	}
-}
 
 void MainGame::End() 
 {

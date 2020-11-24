@@ -151,7 +151,7 @@ void Run()
 				Input.keyUp = e.key.keysym.sym;
 				break;
 			case SDL_MOUSEMOTION:
-				Input.mousePos.x = e.motion.x;
+				Input.mousePos.x = (float)e.motion.x;
 				Input.mousePos.y = g_WindowHeight - e.motion.y;
 				break;
 			case SDL_MOUSEBUTTONDOWN:

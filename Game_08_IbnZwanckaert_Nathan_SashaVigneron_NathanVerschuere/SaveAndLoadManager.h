@@ -8,4 +8,5 @@ namespace SLUtils {
 
 bool AddScore(int& score);
 void InitializeGameAssets();
-
+void DeleteGameAssets();
+Texture* GetTexture(const std::string& id);

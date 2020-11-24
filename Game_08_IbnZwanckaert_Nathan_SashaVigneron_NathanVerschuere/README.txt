@@ -90,7 +90,16 @@ bool UIButton(Point2f Pos, Texture* t, bool Active = true);
 --------------Save System-------------------
 
 bool AddScore(int& score);
--> Voegt score toe in de juiste plaats
+-> adds score to the right place and saves it
+-> return true if new highscore
+
+--------------Texture System-------------------
+Texture* GetTexture(const std::string& id);
+-> return the texture specified by the id(name of file)
+
+example:
+DrawTexture(*GetTexture("Background.png"),Point2f(0,0));
+!!!! do not forget to put * infront of the GetTexture() !!!!
 
 
 

@@ -6,8 +6,8 @@ using namespace UI;
 std::string g_WindowTitle{ "Name Project - Name, Firstname - 1DAExx" };
 InputS Input{};
 // Change the window dimensions here
-float g_WindowWidth{ 1024 };
-float g_WindowHeight{ 768 };
+float g_WindowWidth{ 1280 };
+float g_WindowHeight{ 720 };
 #pragma endregion gameInformation
 
 

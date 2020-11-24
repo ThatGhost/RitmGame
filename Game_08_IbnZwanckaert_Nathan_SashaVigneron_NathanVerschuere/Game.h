@@ -1,5 +1,6 @@
 #pragma once
 using namespace utils;
+using namespace UI;
 #pragma region gameInformation
 // Set your name and group in the title here
 std::string g_WindowTitle{ "Name Project - Name, Firstname - 1DAExx" };
@@ -14,8 +15,8 @@ float g_WindowHeight{ 720 };
 #pragma region ownDeclarations
 // Declare your own global variables here
 INT8 g_Scene{};
-Menu g_MenuClass{};
-GameMain g_GameClass{};
+MainGame g_MainGame{};
+MainMenu g_MainMenu{};
 // Declare your own functions here
 #pragma endregion ownDeclarations
 

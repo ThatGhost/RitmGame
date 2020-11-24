@@ -1,22 +1,18 @@
 #include "pch.h"
 #include "MainGame.h"
+
 extern float g_WindowHeight;
 extern float g_WindowWidth;
+
+extern InputS Input;
 
 using namespace utils;
 using namespace UI;
 
-
 #pragma region Game
 void MainGame::Start() 
 {
-	SpawnDuck();
-	UpdateDucks();
-	SpawnDuck();
-	UpdateDucks();
-	SpawnDuck();
-	SpawnDuck();
-
+	
 }
 
 void MainGame::Draw() 
@@ -25,12 +21,14 @@ void MainGame::Draw()
 
 	DrawTrack();
 	DrawDucks(m_DuckArray);
+	DrawHealth();
 }
 
 void MainGame::SpawnDuck()
 {
 	m_DuckArray[g_DuckArraySize - 1].value = 1;
 	m_DuckArray[g_DuckArraySize - 1].color = Color4f(GetRand(0.0f,1.0f), GetRand(0.0f, 1.0f), GetRand(0.0f, 1.0f), 0.5f );
+	m_DuckArray[g_DuckArraySize - 1].offset = Point2f(float(rand() % 11 - 5), float(rand() % 11 - 5));
 }
 void MainGame::UpdateDucks()
 {
@@ -46,13 +44,12 @@ void MainGame::UpdateDucks()
 }
 void MainGame::CheckDucks() 
 {
-	if (m_DuckArray[2].value == 1) 
+	if (m_DuckArray[1].value == 1) 
 	{
-		m_DuckArray[2].value = 0;
-		Playsound("place.wav");
-		//AND PUNISH PLAYER
+		m_DuckArray[1].value = 0;
+		//Playsound("place.wav");
+		AddHealth(-5);
 	}
-
 }
 
 void MainGame::DrawTrack()
@@ -92,31 +89,106 @@ void MainGame::DrawDucks(const Duck array[])
 	{
 		if (array[i].value == 1) 
 		{
-			Rectf duckRect{ m_TrackPosition.x + xOffset + (i * m_CellSize), m_TrackPosition.y - (m_TrackLineThickness / 2), float(m_CellSize * 9 / 10), float(m_CellSize * 9 / 10) };
+
+			Rectf duckRect{ m_TrackPosition.x + xOffset + (i * m_CellSize) + m_DuckArray[g_DuckArraySize - 1].offset.x,
+							m_TrackPosition.y - (m_TrackLineThickness / 2) + m_DuckArray[g_DuckArraySize - 1].offset.y,
+							float(m_CellSize * 9 / 10), 
+							float(m_CellSize * 9 / 10) };
 			DrawTexture(*GetTexture("Duck2.png"), duckRect);
-			SetColor(array[i].color);
-			FillRect(duckRect);
+			//SetColor(array[i].color);
+			//FillRect(duckRect);
 		}
+		SetColor(0.3f, 0.2f, 0.3f);
 	}
 }
+void MainGame::DrawHealth()
+{
+	float border{ 10 };
+	float width{ 300 };
+	float height{ 25 };
+	float insideBorder{ 5 };
+	float insideWidth{ (width - (2 * insideBorder)) };
+	float insideHeight{ height - (2 * insideBorder) };
 
+	Rectf outsideBar{ border, g_WindowHeight - height - border, width, height };
+	Rectf insideBar{ border + insideBorder, g_WindowHeight - height - border + insideBorder, insideWidth, insideHeight };
+	Rectf healthBar{ border + insideBorder, g_WindowHeight - height - border + insideBorder, insideWidth * (m_Health / 100.0f), insideHeight };
+
+	SetColor(0.3f, 0.2f, 0.3f);
+	FillRect(outsideBar);
+	SetColor(0.4f, 0.3f, 0.4f);
+	FillRect(insideBar);
+	SetColor(0.8f, 0.5f, 0.4f);
+	FillRect(healthBar);
+}
 
 void MainGame::End() 
 {
 
 }
 
+int timerTimes{}; // DEBUG
 void MainGame::Update(float elapsedSec) 
 {
-	g_Timer -= elapsedSec;
-	if (g_Timer <= 0)
+	
+	m_Timer -= elapsedSec;
+	if (m_Timer <= 0)
 	{
+		timerTimes++;
 		UpdateDucks();
 		CheckDucks();
-		g_Timer = g_TimerValue;
+		m_Timer = g_TimerValue;
+		if (timerTimes == 3)	// DEBUG
+		{						// DEBUG
+			SpawnDuck();		// DEBUG
+			timerTimes = 0;		// DEBUG
+		}						// DEBUG
+	}
+
+	CheckInput();
+}
+
+void MainGame::CheckInput() 
+{
+	if (Input.keyDown == SDLK_z)
+	{
+		if (!(Input.keyDownTime >= 0.01f))
+		{
+			//std::cout << "Z was pressed\n";
+			if (m_DuckArray[2].value == 1) 
+			{
+				m_DuckArray[2].value = 0; // Remove Duck
+
+				AddScore(rand() % 51);
+				AddHealth(3);
+			}
+			else
+			{
+				AddHealth(-5);
+				//std::cout << "No duck there!\n";
+			}
+		}
+		else
+		{
+			//std::cout << "Stop Holding Z!\n";
+		}
 	}
 }
 
+	#pragma region Health&Score
+
+	void MainGame::AddHealth(int amount) 
+	{
+		m_Health += amount;
+		if (m_Health < 0) m_Health = 0;
+		if (m_Health > 100) m_Health = 100;
+	}
+	void MainGame::AddScore(int amount)
+	{
+		m_Score += amount;
+	}
+
+	#pragma endregion
 
 	#pragma region Utils
 	void MainGame::Swap(Duck array[], int idx1, int idx2)

@@ -1,14 +1,12 @@
 #include "pch.h"
-#include "Game.h"
+#include "Game.h" 
+#include <map>
 
 //Basic game functions
 #pragma region gameFunctions											
 void Start()
 {
 	InitializeGameAssets();
-	int score{ 1000 };
-	if (AddScore(score))std::cout << "HighScore\n";
-	else std::cout << "Top 5!\n";
 }
 
 void Draw()
@@ -17,10 +15,10 @@ void Draw()
 	switch (g_Scene)
 	{
 	case 0:
-		Menu_Scene();
+		g_MainGame.Draw();
 		break;
 	case 1:
-		Main_Game();
+		g_MainMenu.Draw();
 		break;
 	}
 }
@@ -32,16 +30,10 @@ void Update(float elapsedSec)
 
 void End()
 {
-	// free game resources here
+	DeleteGameAssets();
 }
 #pragma endregion gameFunctions
 
 #pragma region ownDefinitions
-void Menu_Scene() {
-
-}
-void Main_Game() {
-
-}
 
 #pragma endregion ownDefinitions

@@ -101,6 +101,9 @@ example:
 DrawTexture(*GetTexture("Background.png"),Point2f(0,0));
 !!!! do not forget to put * infront of the GetTexture() !!!!
 
+--------------Audio System-------------------
+void Playsound(std::string SoundName);
+-> play sound file (.wav only!!!!)
 
 
 

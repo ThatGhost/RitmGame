@@ -63,7 +63,7 @@ bool AddScore(int& score) {
 	bool HighScore{};
 
 	if (score >= AllScore[AllScore.size() - 1]) {
-		AllScore = ReplaceValue(AllScore, score, AllScore.size()-1);
+		AllScore = ReplaceValue(AllScore, score, int(AllScore.size()-1));
 		HighScore = true;
 	}
 	else {

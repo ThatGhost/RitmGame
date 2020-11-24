@@ -6,12 +6,17 @@ extern float g_WindowWidth;
 using namespace utils;
 using namespace UI;
 
-void Swap(int array[], int idx1, int idx2);
 
 #pragma region Game
 void MainGame::Start() 
 {
 	SpawnDuck();
+	UpdateDucks();
+	SpawnDuck();
+	UpdateDucks();
+	SpawnDuck();
+	SpawnDuck();
+
 }
 
 void MainGame::Draw() 
@@ -24,7 +29,8 @@ void MainGame::Draw()
 
 void MainGame::SpawnDuck()
 {
-	m_DuckArray[g_DuckArraySize - 1] = 1;
+	m_DuckArray[g_DuckArraySize - 1].value = 1;
+	m_DuckArray[g_DuckArraySize - 1].color = Color4f(GetRand(0.0f,1.0f), GetRand(0.0f, 1.0f), GetRand(0.0f, 1.0f), 0.5f );
 }
 void MainGame::UpdateDucks()
 {
@@ -32,7 +38,7 @@ void MainGame::UpdateDucks()
 	{
 		if (i == g_DuckArraySize - 1)
 		{
-			m_DuckArray[i] = 0;
+			m_DuckArray[i].value = 0;
 			return;
 		}
 		Swap(m_DuckArray, i, i + 1);
@@ -40,11 +46,11 @@ void MainGame::UpdateDucks()
 }
 void MainGame::CheckDucks() 
 {
-
-	if (m_DuckArray[1] == 1) 
+	if (m_DuckArray[2].value == 1) 
 	{
-		m_DuckArray[1] == 0;
-		// AND PUNISH PLAYER
+		m_DuckArray[2].value = 0;
+		Playsound("place.wav");
+		//AND PUNISH PLAYER
 	}
 
 }
@@ -77,17 +83,19 @@ void MainGame::DrawGrid(Point2f startPos, float width, float height, int gridSiz
 	DrawRect(startPos.x + (m_CellSize * 2), startPos.y, m_CellSize, g_TrackHeight, m_TrackLineThickness);
 	SetColor(0.3f, 0.2f, 0.3f);
 }
-void MainGame::DrawDucks(const int array[])
+void MainGame::DrawDucks(const Duck array[])
 {
 	const float duckSize{ 100 };
 	const float xOffset{ (m_CellSize - duckSize)/2 };
 
 	for (int i = 2; i < g_DuckArraySize; i++)
 	{
-		if (array[i] == 1) 
+		if (array[i].value == 1) 
 		{
 			Rectf duckRect{ m_TrackPosition.x + xOffset + (i * m_CellSize), m_TrackPosition.y - (m_TrackLineThickness / 2), float(m_CellSize * 9 / 10), float(m_CellSize * 9 / 10) };
 			DrawTexture(*GetTexture("Duck2.png"), duckRect);
+			SetColor(array[i].color);
+			FillRect(duckRect);
 		}
 	}
 }
@@ -104,17 +112,30 @@ void MainGame::Update(float elapsedSec)
 	if (g_Timer <= 0)
 	{
 		UpdateDucks();
+		CheckDucks();
 		g_Timer = g_TimerValue;
 	}
 }
 
 
 	#pragma region Utils
-	void MainGame::Swap(int array[], int idx1, int idx2)
+	void MainGame::Swap(Duck array[], int idx1, int idx2)
 	{
-		int tempVar{ array[idx1] };
-		array[idx1] = array[idx2];
-		array[idx2] = tempVar;
+		int tempVar{ array[idx1].value };
+		Color4f colorVar{ array[idx1].color };
+		array[idx1].value = array[idx2].value;
+		array[idx1].color = array[idx2].color;
+		array[idx2].value = tempVar;
+		array[idx2].color = colorVar;
+	}
+
+	float MainGame::GetRand(float min, float max)
+	{
+		float result{};
+
+		result = ((rand() % int((max - min) * 100)) / 100.0f) + min;
+
+		return result;
 	}
 	#pragma endregion
 
@@ -134,7 +155,8 @@ void MainMenu::End() {
 
 }
 
-void MainMenu::Update(float elapsedSec) {
+void MainMenu::Update(float elapsedSec) 
+{
 
 }
 #pragma endregion Menu

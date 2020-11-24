@@ -17,7 +17,12 @@ public:
 	const float g_TrackHeight{ 100 };
 private:
 
-	int m_DuckArray[g_DuckArraySize]{  };
+	struct Duck {
+		int value{ };
+		Color4f color{ 0,0,0,0 };
+	};
+
+	Duck m_DuckArray[g_DuckArraySize]{  };
 
 	int m_GridSize{10};
 	float m_CellSize{};
@@ -30,11 +35,13 @@ private:
 	void UpdateDucks();
 	void CheckDucks();
 
-	void DrawDucks(const int array[]);
+	void DrawDucks(const Duck array[]);
 	void DrawGrid(Point2f startPos, float width, float height, int gridSize);
 	void DrawTrack();
 
-	void Swap(int array[], int idx1, int idx2);
+	float GetRand(float min, float max);
+
+	void Swap(Duck array[], int idx1, int idx2);
 
 
 };

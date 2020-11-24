@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Game.h" 
+#include "Game.h"
 #include <map>
 
 //Basic game functions

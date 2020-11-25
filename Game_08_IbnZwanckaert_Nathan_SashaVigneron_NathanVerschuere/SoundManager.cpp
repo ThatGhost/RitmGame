@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "SoundManager.h"
-#include "SoundStream.h"
-#include "SoundEffect.h"
 #include "irrKlang.h"
 #pragma comment(lib, "irrKlang.lib")
 

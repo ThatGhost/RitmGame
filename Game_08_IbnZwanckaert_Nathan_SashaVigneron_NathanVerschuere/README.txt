@@ -101,6 +101,10 @@ example:
 DrawTexture(*GetTexture("Background.png"),Point2f(0,0));
 !!!! do not forget to put * infront of the GetTexture() !!!!
 
+void FillText(std::string str, Point2f pos, int scale);
+-> draws text at position, with scale (%)
+
+
 
 
 

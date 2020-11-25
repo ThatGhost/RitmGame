@@ -6,7 +6,7 @@ namespace SLUtils {
 	std::vector<int> ReplaceValue(std::vector<int>& vector, int& value, int place);
 }
 
-bool AddScore(int& score);
+bool AddEndScore(int& score);
 void InitializeGameAssets();
 void DeleteGameAssets();
 Texture* GetTexture(const std::string& id);

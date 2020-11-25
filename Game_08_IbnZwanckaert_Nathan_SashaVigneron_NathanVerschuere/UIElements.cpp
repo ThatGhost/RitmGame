@@ -56,7 +56,9 @@ void UItext::Draw() {
 #pragma endregion
 
 #pragma region UIElements
+Texture g_Font{};
 namespace UI {
+
 	void UIRectangle(Point2f Pos, Point2f Size, Color4f c) {
 		AllData data_{};
 		data_.c = c;
@@ -123,6 +125,23 @@ namespace UI {
 			g_UIData.push_back(data_);
 		}
 		return (Input.ClickUp == Input.MB1 && Input.mousePos.x > Pos.x && Input.mousePos.x < Pos.x + t->width && Input.mousePos.y > Pos.y && Input.mousePos.y < Pos.y + t->height);
+	}
+
+
+	void FillText(std::string str, Point2f pos, int scale) {
+		float sc{128};
+		int spacing{(int)(scale * 0.95f )};
+		for (int i = 0; i < str.length(); i++)
+		{
+			if ((int)str[i] != ' ') {
+				int ascii = (int)str[i] - '#';
+				if (str[i] == '!')ascii = '{' - '#';
+				if (str[i] == '"')ascii = '|' - '#';
+				int p{ spacing * i }; // size texture
+				DrawTexture(g_Font, Rectf(pos.x + p, pos.y, scale/ 100.0f * sc, scale / 100.0f * sc), 
+					Rectf(float((ascii % 15) * sc),	float((1 + ascii / 15) * sc), sc, sc));
+			}
+		}
 	}
 }
 #pragma endregion

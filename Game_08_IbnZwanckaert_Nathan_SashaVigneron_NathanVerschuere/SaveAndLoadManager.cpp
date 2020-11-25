@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "SaveAndLoadManager.h"
 #include "dirent.h"
+#include "irrKlang.h"
 #include <fstream>
 #include <sstream>
 #include <map>
@@ -52,13 +53,17 @@ namespace SLUtils {
 }
 using namespace SLUtils;
 using namespace utils;
+
+extern irrklang::ISoundEngine* engine;
+extern Texture g_Font;
+
 /// <summary>
 /// Adds score to scoreboard in right place. 
 /// return true if its the new highscore.
 /// </summary>
 /// <param name="score"></param>
 /// <returns></returns>
-bool AddScore(int& score) {
+bool AddEndScore(int& score) {
 	std::vector<int> AllScore{ReadFileForInt(SavePath)};
 	bool HighScore{};
 
@@ -103,15 +108,15 @@ void InitializeGameAssets() {
 		textureMap.insert({ allNames[i], &AllTextures[i]});
 	}
 	closedir(dir);
+	TextureFromFile("Assets/Font.png", g_Font);
 }
-#include "irrKlang.h"
 
-extern irrklang::ISoundEngine* engine;
 void DeleteGameAssets() {
 	for (size_t i = 0; i < AllTextures.size(); i++)
 	{
 		DeleteTexture(AllTextures[i]);
 	}
+	DeleteTexture(g_Font);
 	engine->drop();
 }
 

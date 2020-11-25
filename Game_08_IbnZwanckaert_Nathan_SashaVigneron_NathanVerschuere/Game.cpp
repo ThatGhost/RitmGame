@@ -6,10 +6,10 @@
 #pragma region gameFunctions											
 void Start()
 {
+	SetVolume(1);
 	InitializeGameAssets();
 	g_MainGame.Start();
 	g_MainMenu.Start();
-	PlayMusic("place.wav");
 }
 
 void Draw()

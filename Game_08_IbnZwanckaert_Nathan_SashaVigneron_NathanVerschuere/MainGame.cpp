@@ -22,7 +22,6 @@ void MainGame::Draw()
 	DrawTrack();
 	DrawDucks(m_DuckArray);
 	DrawHealth();
-	//FillText("Test2",Point2f(300,100),10);
 }
 
 void MainGame::SpawnDuck()
@@ -166,7 +165,7 @@ void MainGame::CheckInput()
 				m_DuckArray[2].value = 0; // Remove Duck
 
 				AddScore(rand() % 51);
-				AddHealth(3);
+				AddHealth(5);
 			}
 			else
 			{
@@ -226,7 +225,15 @@ void MainMenu::Start() {
 
 void MainMenu::Draw() {
 	DrawTexture(*GetTexture("Background.png"), Point2f(0, 0));
-
+	//std::cout << (int)GetTexture("Background.png")->height << '\n';
+	int widthButton{ 600 }, heightButton{ (int)GetTexture("Background.png")->height / 6 }, margin{30};
+	for (size_t i = 0; i < 3; i++)
+	{
+		widthButton -= 80;
+		Point2f posButton{ g_WindowWidth - widthButton , 
+			g_WindowHeight / 2 - margin - heightButton / 2 - heightButton + (heightButton + margin) * i };
+		UIButton(posButton,GetTexture("UITab.png"), 70);
+	}
 }
 
 void MainMenu::End() {

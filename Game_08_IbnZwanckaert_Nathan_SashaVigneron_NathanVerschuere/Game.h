@@ -14,7 +14,7 @@ float g_WindowHeight{ 720 };
 
 #pragma region ownDeclarations
 // Declare your own global variables here
-INT8 g_Scene{};
+INT8 g_Scene{1};
 MainGame g_MainGame{};
 MainMenu g_MainMenu{};
 // Declare your own functions here

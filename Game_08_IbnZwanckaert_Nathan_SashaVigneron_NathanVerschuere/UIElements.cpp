@@ -50,7 +50,8 @@ void UITria::Draw() {
 UItext::UItext() {}
 
 void UItext::Draw() {
-	DrawTexture(*t,Pos,r);
+	Point2f newScale{t->width * (scale/100.0f), t->height * (scale/100.0f)};
+	DrawTexture(*t, Rectf( Pos.x,Pos.y, newScale.x, newScale.y ));
 }
 
 #pragma endregion
@@ -110,23 +111,25 @@ namespace UI {
 		return (Input.ClickUp == Input.MB1 && Input.mousePos.x > Pos.x && Input.mousePos.x < Pos.x + Size.x && Input.mousePos.y > Pos.y && Input.mousePos.y < Pos.y + Size.y);
 	}
 
-	bool UIButton(Point2f Pos, Texture* t, bool Active) {
+	bool UIButton(Point2f Pos, Texture* t, float scale, bool Active) {
 		AllData data_{};
 		data_.p = &g_UiText;
 		data_.Pos = Pos;
 		data_.t = t;
-		g_UIData.push_back(data_);
-		if (!Active || (Input.ClickDown == Input.MB1 && Input.mousePos.x > Pos.x && Input.mousePos.x < Pos.x + t->width && Input.mousePos.y > Pos.y && Input.mousePos.y < Pos.y + t->height)) {
-			data_.c = Color4f(0, 0, 0, 0.3f);
-			data_;
-			data_.p = &g_UiRect;
-			data_.Pos = Pos;
-			data_.Size = Point2f(t->width, t->height);
-			g_UIData.push_back(data_);
+		data_.scale = scale;
+		if (Input.mousePos.x > Pos.x && Input.mousePos.x < Pos.x + t->width  * (scale / 100.0f) 
+		 && Input.mousePos.y > Pos.y && Input.mousePos.y < Pos.y + t->height * (scale / 100.0f)) {
+			//data_.c = Color4f(0, 0, 0, 0.3f);
+			//data_;
+			//data_.p = &g_UiRect;
+			//data_.Pos = Pos;
+			//data_.Size = Point2f(t->width, t->height);
+			//g_UIData.push_back(data_);
+			data_.scale = scale += 10;
 		}
+		g_UIData.push_back(data_);
 		return (Input.ClickUp == Input.MB1 && Input.mousePos.x > Pos.x && Input.mousePos.x < Pos.x + t->width && Input.mousePos.y > Pos.y && Input.mousePos.y < Pos.y + t->height);
 	}
-
 
 	void FillText(std::string str, Point2f pos, int scale) {
 		float sc{128};

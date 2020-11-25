@@ -22,6 +22,7 @@ void MainGame::Draw()
 	DrawTrack();
 	DrawDucks(m_DuckArray);
 	DrawHealth();
+	DrawScore();
 }
 
 void MainGame::SpawnDuck()
@@ -120,6 +121,18 @@ void MainGame::DrawHealth()
 	FillRect(insideBar);
 	SetColor(0.8f, 0.5f, 0.4f);
 	FillRect(healthBar);
+}
+void MainGame::DrawScore() 
+{
+	float scale{ 50 };
+	float offset{ scale /2};
+	int nrChars{};
+	std::string scoreString{ std::to_string(m_Score) };
+	for (int i = 0; i < scoreString.length(); i++)
+	{
+		nrChars++;
+	}
+	FillText(std::to_string(m_Score), Point2f((g_WindowWidth/2) - (nrChars * offset), g_WindowHeight - 100), scale);
 }
 
 void MainGame::End() 

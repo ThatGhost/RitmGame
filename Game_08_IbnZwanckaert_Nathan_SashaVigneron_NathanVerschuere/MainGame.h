@@ -42,6 +42,7 @@ private:
 	void DrawGrid(Point2f startPos, float width, float height, int gridSize);
 	void DrawTrack();
 	void DrawHealth();
+	void DrawScore();
 
 	//Health&Score
 	int m_Score{};

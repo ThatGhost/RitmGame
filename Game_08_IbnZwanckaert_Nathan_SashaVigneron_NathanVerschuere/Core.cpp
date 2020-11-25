@@ -37,7 +37,7 @@ void Initzialize()
 {
 	
 	//Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
 	{
 		QuitOnSDLError();
 	}
@@ -112,6 +112,12 @@ void Initzialize()
 		QuitOnTtfError();
 	}
 
+	//Initialize SDL_mixer
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+	{
+		std::cerr << "Core::Initialize( ), error when calling Mix_OpenAudio: " << Mix_GetError() << std::endl;
+		return;
+	}
 }
 
 extern void Start();
@@ -243,6 +249,7 @@ void Cleanup()
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
+	Mix_Quit();
 }
 
 void QuitOnSDLError()

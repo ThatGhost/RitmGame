@@ -75,6 +75,7 @@ bool AddScore(int& score) {
 			}
 		}
 	}
+
 	WrightToFileInts(AllScore, SavePath);
 	return HighScore;
 }
@@ -87,6 +88,7 @@ void InitializeGameAssets() {
 	if (dir == NULL) {
 		return;
 	}
+	
 	std::vector<std::string> allNames{};
 	std::cout << "Initialised game assets: \n";
 	while ((entry = readdir(dir)) != NULL) {

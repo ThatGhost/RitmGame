@@ -1,22 +1,23 @@
 #include "pch.h"
 #include "SoundManager.h"
-#include <Windows.h>
-#include <mmsystem.h>
-#pragma comment(lib, "winmm.lib")
+#include "SoundStream.h"
+#include "SoundEffect.h"
+SoundStream music{ "Assets/Audio/bruh.mp3" };
+SoundEffect effect{ "Assets/Audio/place.wav" };
 
-std::wstring s2ws(const std::string& s)
-{
-    int len;
-    int slength = (int)s.length() + 1;
-    len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
-    wchar_t* buf = new wchar_t[len];
-    MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
-    std::wstring r(buf);
-    delete[] buf;
-    return r;
+void PlayMusic(std::string SoundName) {
+	std::string path{ "Assets/Audio/" + SoundName };
+	//music = SoundStream(path);
+	if (music.IsLoaded()) {
+		music.SetVolume(100);
+		music.Play(true);
+	}
 }
 
-void Playsound(std::string SoundName) {
+void PlaySoundEffect(std::string SoundName) {
 	std::string path{ "Assets/Audio/" + SoundName };
-	PlaySound(s2ws(path).c_str(), 0, SND_SYNC);
+	if (effect.IsLoaded()) {
+		effect.SetVolume(100);
+		effect.Play(true);
+	}
 }

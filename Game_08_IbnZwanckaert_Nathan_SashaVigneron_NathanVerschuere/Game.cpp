@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Game.h" 
+#include "Game.h"
 #include <map>
 
 //Basic game functions
@@ -9,6 +9,7 @@ void Start()
 	InitializeGameAssets();
 	g_MainGame.Start();
 	g_MainMenu.Start();
+	PlayMusic("place.wav");
 }
 
 void Draw()

@@ -1,3 +1,4 @@
 #pragma once
 
-void Playsound(std::string SoundName);
+void PlayMusic(std::string SoundName);
+void PlaySoundEffect(std::string SoundName);

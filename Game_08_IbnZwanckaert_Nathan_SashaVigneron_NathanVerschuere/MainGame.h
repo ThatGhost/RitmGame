@@ -4,7 +4,6 @@ const int g_DuckArraySize{ 10 };
 
 class MainGame
 {
-
 public:
 	void Draw();
 	void Update(float elapsedSec);

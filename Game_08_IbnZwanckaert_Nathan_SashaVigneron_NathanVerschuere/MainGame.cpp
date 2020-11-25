@@ -47,7 +47,7 @@ void MainGame::CheckDucks()
 	if (m_DuckArray[1].value == 1) 
 	{
 		m_DuckArray[1].value = 0;
-		//Playsound("place.wav");
+		PlaySoundEffect("place.wav");
 		AddHealth(-5);
 	}
 }
@@ -150,27 +150,21 @@ void MainGame::Update(float elapsedSec)
 
 void MainGame::CheckInput() 
 {
-	if (Input.keyDown == SDLK_z)
+	if (Input.keyUp == SDLK_z)
 	{
-		if (!(Input.keyDownTime >= 0.01f))
+		//std::cout << "Z was pressed\n";
+		if (m_DuckArray[2].value == 1) 
 		{
-			//std::cout << "Z was pressed\n";
-			if (m_DuckArray[2].value == 1) 
-			{
-				m_DuckArray[2].value = 0; // Remove Duck
+			m_DuckArray[2].value = 0; // Remove Duck
 
-				AddScore(rand() % 51);
-				AddHealth(3);
-			}
-			else
-			{
-				AddHealth(-5);
-				//std::cout << "No duck there!\n";
-			}
+			AddScore(rand() % 51);
+			AddHealth(3);
 		}
 		else
 		{
-			//std::cout << "Stop Holding Z!\n";
+			//std::cout << "No duck there!\n";
+			AddHealth(-5);
+			PlaySoundEffect("place.wav");
 		}
 	}
 }

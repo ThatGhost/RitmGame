@@ -1,25 +1,21 @@
 #include "pch.h"
 #include "SoundManager.h"
-#include "SoundStream.h"
-#include "SoundEffect.h"
-SoundStream music{ "Assets/Audio/bruh.mp3" };
-SoundEffect effect{ "Assets/Audio/place.wav" };
+#include "irrKlang.h"
+#pragma comment(lib, "irrKlang.lib")
 
-void PlayMusic(std::string SoundName) {
+irrklang::ISoundEngine* engine = irrklang::createIrrKlangDevice();
+
+void PlayMusic(const std::string SoundName) {
 	std::string path{ "Assets/Audio/" + SoundName };
-	//music = SoundStream(path);
-	if (music.IsLoaded()) {
-		music.SetVolume(100);
-		music.Play(true);
-	}
+	engine->play2D(path.c_str());
+	//load in level
 }
 
-void PlaySoundEffect(std::string SoundName) {
+void PlaySoundEffect(const std::string SoundName) {
 	std::string path{ "Assets/Audio/" + SoundName };
-	if (effect.IsLoaded()) 
-	{
-		std::cout << "Test";
-		effect.SetVolume(100);
-		effect.Play(true);
-	}
+	engine->play2D(path.c_str());
+}
+
+void SetVolume(float volume){
+	engine->setSoundVolume(volume);
 }

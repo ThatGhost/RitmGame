@@ -1,29 +1,19 @@
 #include "pch.h"
-#include "Game.h" 
-//<<<<<<< Updated upstream
-//=======
-#include "SoundStream.h"
-#include "SoundEffect.h"
+#include "Game.h"
+#include <map>
 
-//>>>>>>> Stashed changes
 //Basic game functions
 #pragma region gameFunctions											
 void Start()
 {
 	InitializeGameAssets();
-	PlayMusic("bruh.mp3");
 	g_MainGame.Start();
 	g_MainMenu.Start();
+	PlaySoundEffect("");
 }
 
 void Draw()
 {
-	SoundStream music{ "Assets/Audio/bruh.mp3" };
-	music.Play(1);
-	if (music.IsPlaying()) {
-		std::cout << "is playing bruh\n";
-	}
-
 	ClearBackground();
 	switch (g_Scene)
 	{

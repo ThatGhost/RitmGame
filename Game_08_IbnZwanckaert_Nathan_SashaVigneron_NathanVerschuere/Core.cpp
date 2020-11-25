@@ -35,7 +35,7 @@ std::vector<AllData> g_UIData{};
 
 void Initzialize()
 {
-	
+
 	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
 	{
@@ -211,7 +211,7 @@ void Run()
 					Input.keyDownTime = 0;
 				}
 				Input.keyUp = 0;
-				if(Input.ClickUp != 0)Input.ClickDown = Input.ClickState::NA;
+				if (Input.ClickUp != 0)Input.ClickDown = Input.ClickState::NA;
 				Input.ClickUp = Input.ClickState::NA;
 			}
 

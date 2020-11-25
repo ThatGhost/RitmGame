@@ -45,10 +45,10 @@
     <ClCompile Include="SoundManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SoundEffect.cpp">
+    <ClCompile Include="SoundStream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SoundStream.cpp">
+    <ClCompile Include="SoundEffect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,10 +80,10 @@
     <ClInclude Include="SoundManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SoundEffect.h">
+    <ClInclude Include="SoundStream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SoundStream.h">
+    <ClInclude Include="SoundEffect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,6 +2,7 @@
 #include "SoundManager.h"
 #include "SoundStream.h"
 #include "SoundEffect.h"
+
 SoundStream music{ "Assets/Audio/bruh.mp3" };
 SoundEffect effect{ "Assets/Audio/place.wav" };
 
@@ -16,7 +17,9 @@ void PlayMusic(std::string SoundName) {
 
 void PlaySoundEffect(std::string SoundName) {
 	std::string path{ "Assets/Audio/" + SoundName };
-	if (effect.IsLoaded()) {
+	if (effect.IsLoaded()) 
+	{
+		std::cout << "Test";
 		effect.SetVolume(100);
 		effect.Play(true);
 	}

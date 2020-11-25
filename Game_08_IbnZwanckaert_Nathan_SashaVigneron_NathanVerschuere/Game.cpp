@@ -9,6 +9,7 @@ void Start()
 	InitializeGameAssets();
 	g_MainGame.Start();
 	g_MainMenu.Start();
+	PlaySoundEffect("");
 }
 
 void Draw()

@@ -1,11 +1,11 @@
 #include "pch.h"
 #include "Game.h" 
-<<<<<<< Updated upstream
-=======
+//<<<<<<< Updated upstream
+//=======
 #include "SoundStream.h"
 #include "SoundEffect.h"
 
->>>>>>> Stashed changes
+//>>>>>>> Stashed changes
 //Basic game functions
 #pragma region gameFunctions											
 void Start()

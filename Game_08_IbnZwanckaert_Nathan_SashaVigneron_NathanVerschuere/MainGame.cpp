@@ -16,8 +16,8 @@ void MainGame::Draw() {
 	SetColor(0.3f, 0.2f, 0.3f); // Purple Color
 	Point2f rectPosition{ 60, 25 };
 
-<<<<<<< Updated upstream
-=======
+//<<<<<<< Updated upstream
+//=======
 	if (m_DuckArray[1] == 1) 
 	{
 		m_DuckArray[1] = 0;
@@ -25,7 +25,7 @@ void MainGame::Draw() {
 		SpawnDuck();
 		// AND PUNISH PLAYER
 	}
->>>>>>> Stashed changes
+//>>>>>>> Stashed changes
 
 
 	float duckSize{ 250 };
@@ -61,8 +61,8 @@ void MainGame::DrawDucks(const int array[])
 
 void MainGame::End() {
 
-<<<<<<< Updated upstream
-=======
+//<<<<<<< Updated upstream
+//=======
 void MainGame::Update(float elapsedSec) 
 {
 	g_Timer -= elapsedSec;
@@ -72,7 +72,7 @@ void MainGame::Update(float elapsedSec)
 		CheckDucks();
 		g_Timer = g_TimerValue;
 	}
->>>>>>> Stashed changes
+//>>>>>>> Stashed changes
 }
 
 void MainGame::Update(float elapsedSec) {

@@ -104,12 +104,15 @@ void InitializeGameAssets() {
 	}
 	closedir(dir);
 }
+#include "irrKlang.h"
 
+extern irrklang::ISoundEngine* engine;
 void DeleteGameAssets() {
 	for (size_t i = 0; i < AllTextures.size(); i++)
 	{
 		DeleteTexture(AllTextures[i]);
 	}
+	engine->drop();
 }
 
 /// <summary>

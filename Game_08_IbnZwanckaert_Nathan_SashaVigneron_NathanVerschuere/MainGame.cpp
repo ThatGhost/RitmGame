@@ -22,6 +22,7 @@ void MainGame::Draw()
 	DrawTrack();
 	DrawDucks(m_DuckArray);
 	DrawHealth();
+	//FillText("Test2",Point2f(300,100),10);
 }
 
 void MainGame::SpawnDuck()
@@ -30,6 +31,7 @@ void MainGame::SpawnDuck()
 	m_DuckArray[g_DuckArraySize - 1].color = Color4f(GetRand(0.0f,1.0f), GetRand(0.0f, 1.0f), GetRand(0.0f, 1.0f), 0.5f );
 	m_DuckArray[g_DuckArraySize - 1].offset = Point2f(float(rand() % 11 - 5), float(rand() % 11 - 5));
 }
+
 void MainGame::UpdateDucks()
 {
 	for (int i = 0; i < g_DuckArraySize; i++)
@@ -42,6 +44,7 @@ void MainGame::UpdateDucks()
 		Swap(m_DuckArray, i, i + 1);
 	}
 }
+
 void MainGame::CheckDucks() 
 {
 	if (m_DuckArray[1].value == 1) 
@@ -69,6 +72,7 @@ void MainGame::DrawTrack()
 
 	DrawTexture(*GetTexture("Duck1.png"), duckRect);
 }
+
 void MainGame::DrawGrid(Point2f startPos, float width, float height, int gridSize)
 {
 	m_CellSize = width / gridSize;
@@ -80,6 +84,7 @@ void MainGame::DrawGrid(Point2f startPos, float width, float height, int gridSiz
 	DrawRect(startPos.x + (m_CellSize * 2), startPos.y, m_CellSize, g_TrackHeight, m_TrackLineThickness);
 	SetColor(0.3f, 0.2f, 0.3f);
 }
+
 void MainGame::DrawDucks(const Duck array[])
 {
 	const float duckSize{ 100 };
@@ -101,6 +106,7 @@ void MainGame::DrawDucks(const Duck array[])
 		SetColor(0.3f, 0.2f, 0.3f);
 	}
 }
+
 void MainGame::DrawHealth()
 {
 	float border{ 10 };

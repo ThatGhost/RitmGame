@@ -5,8 +5,8 @@
 //Basic game functions
 #pragma region gameFunctions											
 void Start()
-{
-	SetVolume(1);
+{ 
+	SetVolume(0.3f);
 	InitializeGameAssets();
 	g_MainGame.Start();
 	g_MainMenu.Start();

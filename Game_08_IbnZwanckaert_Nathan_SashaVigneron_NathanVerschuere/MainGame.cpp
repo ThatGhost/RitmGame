@@ -117,7 +117,7 @@ void MainGame::DrawGrid(Point2f startPos, float width, float height, int gridSiz
 	{
 		DrawRect(startPos.x + (m_CellSize * i), startPos.y, m_CellSize, g_TrackHeight, m_TrackLineThickness);
 	}
-	SetColor(0.5f, 0.2f, 0.3f);
+	(m_DuckArray[2].value == 1) ? SetColor(0.7f, 0.5f, 0.1f) : SetColor(0.5f, 0.2f, 0.3f);
 	DrawRect(startPos.x + (m_CellSize * 2), startPos.y, m_CellSize, g_TrackHeight, m_TrackLineThickness);
 	SetColor(0.3f, 0.2f, 0.3f);
 }

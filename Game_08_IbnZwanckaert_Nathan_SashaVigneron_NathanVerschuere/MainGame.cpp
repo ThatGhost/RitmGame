@@ -320,11 +320,11 @@ void MainMenu::Draw() {
 			if(UIButton(posButton, GetTexture(name), 70))HandleInput(name);
 		}
 		else if (i == 1) {
-			name = "Towerz.png";
+			name = "FloatingAway.png";
 			if (UIButton(posButton, GetTexture(name), 70))HandleInput(name);
 		}
 		else {
-			name = "Tenno.png";
+			name = "DarkChocolate.png";
 			if (UIButton(posButton, GetTexture(name), 70))HandleInput(name);
 		}
 	}

@@ -24,7 +24,8 @@ void MainGame::Draw()
 	DrawScore();
 	DrawPositiveFeedback();
 	DrawNegativeFeedback();
-
+	DrawMultiplier();
+	DrawMultiplierBubble();
 }
 
 
@@ -57,8 +58,11 @@ void MainGame::Update(float elapsedSec)
 	}
 
 	CheckInput();
+	CheckMouseInput();
 	UpdatePositiveFeedback(elapsedSec);
 	UpdateNegativeFeedback(elapsedSec);
+	UpdateMultiplier(elapsedSec);
+	UpdateMultiplierBubble(elapsedSec);
 }
 void MainGame::SpawnDuck()
 {
@@ -88,6 +92,8 @@ void MainGame::CheckDucks()
 		m_DuckArray[1].value = 0;
 		PlaySoundEffect("place.wav");
 		AddHealth(-5);
+		m_ConsequtiveGoodHits = 0;
+		m_Multiplier = 1;
 		m_NegFeedback = true;
 	}
 }
@@ -144,40 +150,6 @@ void MainGame::DrawDucks(const Duck array[])
 	}
 }
 
-void MainGame::DrawHealth()
-{
-	float border{ 10 };
-	float width{ 300 };
-	float height{ 25 };
-	float insideBorder{ 5 };
-	float insideWidth{ (width - (2 * insideBorder)) };
-	float insideHeight{ height - (2 * insideBorder) };
-
-	Rectf outsideBar{ border, g_WindowHeight - height - border, width, height };
-	Rectf insideBar{ border + insideBorder, g_WindowHeight - height - border + insideBorder, insideWidth, insideHeight };
-	Rectf healthBar{ border + insideBorder, g_WindowHeight - height - border + insideBorder, insideWidth * (m_Health / 100.0f), insideHeight };
-
-	SetColor(0.3f, 0.2f, 0.3f);
-	FillRect(outsideBar);
-	SetColor(0.4f, 0.3f, 0.4f);
-	FillRect(insideBar);
-	SetColor(0.8f, 0.5f, 0.4f);
-	FillRect(healthBar);
-}
-
-void MainGame::DrawScore()
-{
-	float scale{ 50 };
-	float offset{ scale / 2 };
-	int nrChars{};
-	std::string scoreString{ std::to_string(m_Score) };
-	for (int i = 0; i < scoreString.length(); i++)
-	{
-		nrChars++;
-	}
-	FillText(std::to_string(m_Score), Point2f((g_WindowWidth / 2) - (nrChars * offset), g_WindowHeight - 100), scale);
-}
-
 void MainGame::CheckInput() 
 {
 	if (Input.keyUp == SDLK_z)
@@ -189,6 +161,8 @@ void MainGame::CheckInput()
 			m_PosFeedback = true;
 			PlaySoundEffect("beat.wav");
 			AddScore(rand() % 51);
+			m_ConsequtiveGoodHits++;
+			m_MultiplierTimer = m_MultiplierCooldown;
 			AddHealth(3);
 		}
 		else
@@ -196,7 +170,21 @@ void MainGame::CheckInput()
 			//std::cout << "No duck there!\n";
 			m_NegFeedback = true;
 			AddHealth(-5);
+			m_ConsequtiveGoodHits = 0;
+			m_Multiplier = 1;
 			PlaySoundEffect("place.wav");
+		}
+	}
+}
+
+void MainGame::CheckMouseInput() 
+{
+	if (Input.ClickUp == Input.MB1) 
+	{
+		if (GetDistance(Input.mousePos, m_MultiplierBubblePoint) <= m_MultiplierBubbleRadius && m_IsMultiplierBubbleShowing)
+		{
+			m_IsMultiplierBubbleShowing = false;
+			AddMultiplier();
 		}
 	}
 }
@@ -209,14 +197,80 @@ void MainGame::CheckInput()
 		if (m_Health < 0) m_Health = 0;
 		if (m_Health > 100) m_Health = 100;
 	}
-	void MainGame::AddScore(int amount)
+	void MainGame::DrawHealth()
 	{
-		m_Score += amount;
+		float border{ 10 };
+		float width{ 300 };
+		float height{ 25 };
+		float insideBorder{ 5 };
+		float insideWidth{ (width - (2 * insideBorder)) };
+		float insideHeight{ height - (2 * insideBorder) };
+
+		Rectf outsideBar{ border, g_WindowHeight - height - border, width, height };
+		Rectf insideBar{ border + insideBorder, g_WindowHeight - height - border + insideBorder, insideWidth, insideHeight };
+		Rectf healthBar{ border + insideBorder, g_WindowHeight - height - border + insideBorder, insideWidth * (m_Health / 100.0f), insideHeight };
+
+		SetColor(0.3f, 0.2f, 0.3f);
+		FillRect(outsideBar);
+		SetColor(0.4f, 0.3f, 0.4f);
+		FillRect(insideBar);
+		SetColor(0.8f, 0.5f, 0.4f);
+		FillRect(healthBar);
 	}
 
-	#pragma endregion
+	void MainGame::AddScore(int amount)
+	{
+		m_Score += amount * m_Multiplier;
+	}
+	void MainGame::DrawScore()
+	{
+		float scale{ 50 };
+		float offset{ scale / 2 };
+		int nrChars{};
+		std::string scoreString{ std::to_string(m_Score) };
+		for (int i = 0; i < scoreString.length(); i++)
+		{
+			nrChars++;
+		}
+		FillText(std::to_string(m_Score), Point2f((g_WindowWidth / 2) - (nrChars * offset), g_WindowHeight - 100), scale);
+	}
 
+	void MainGame::AddMultiplier() 
+	{
+		m_Multiplier *= 2;
+		if (m_Multiplier > m_MaxMultiplierFactor) m_Multiplier = m_MaxMultiplierFactor;
+	}
+	void MainGame::UpdateMultiplier(float elapsedSec) 
+	{
+		m_MultiplierTimer -= elapsedSec;
+
+		if (m_MultiplierTimer <= 0)
+		{
+			m_MultiplierTimer = m_MultiplierCooldown;
+			m_Multiplier = 1;
+		}
+	}
+	void MainGame::DrawMultiplier() 
+	{
+		float scale{ 50 };
+		float offset{ scale / 2 };
+		int nrChars{};
+		std::string scoreString{ std::to_string(m_Multiplier) };
+		for (int i = 0; i < scoreString.length(); i++)
+		{
+			nrChars++;
+		}
+		FillText("x" + std::to_string(m_Multiplier), Point2f((g_WindowWidth - 100) - (nrChars * offset), g_WindowHeight - 100), scale);
+	}
+	#pragma endregion
 	#pragma region Utils
+	float MainGame::GetDistance(const Point2f& point1, const Point2f& point2)
+	{
+		float result{};
+		result = sqrtf(powf(point2.x - point1.x, 2) + powf(point2.y - point1.y, 2));
+		return result;
+	}
+	
 	void MainGame::Swap(Duck array[], int idx1, int idx2)
 	{
 		int tempVar{ array[idx1].value };
@@ -236,68 +290,108 @@ void MainGame::CheckInput()
 		return result;
 	}
 	#pragma endregion
-
-void MainGame::UpdatePositiveFeedback(float elapsedSec) 
-{
-	if (m_PosFeedback) 
+	#pragma region feedback
+	void MainGame::UpdatePositiveFeedback(float elapsedSec) 
 	{
-		m_PosAccumulatedTime += elapsedSec;
-		m_PosFeedbackTimer -= elapsedSec;
-		m_PosRadius = (m_CellSize * ((8.0f + (4.0f * (m_PosAccumulatedTime / m_PosFeedbackTimerValue))) / 10)) / 2 ;
-		// 8/10 of cell + 4/10 * m_accumulated/m_feedback -> range [ 8/10 cell , 12/10 cell ]
-
-		if (m_PosFeedbackTimer <= 0)
+		if (m_PosFeedback) 
 		{
-			m_PosFeedbackTimer = m_PosFeedbackTimerValue;
-			m_PosAccumulatedTime = 0;
-			m_PosFeedback = false;
+			m_PosAccumulatedTime += elapsedSec;
+			m_PosFeedbackTimer -= elapsedSec;
+			m_PosRadius = (m_CellSize * ((8.0f + (4.0f * (m_PosAccumulatedTime / m_PosFeedbackTimerValue))) / 10)) / 2 ;
+			// 8/10 of cell + 4/10 * m_accumulated/m_feedback -> range [ 8/10 cell , 12/10 cell ]
+
+			if (m_PosFeedbackTimer <= 0)
+			{
+				m_PosFeedbackTimer = m_PosFeedbackTimerValue;
+				m_PosAccumulatedTime = 0;
+				m_PosFeedback = false;
+			}
 		}
-	}
 		
 
-}
-
-void MainGame::DrawPositiveFeedback() 
-{
-	if (m_PosFeedback) 
-	{
-		const float xOffset{ m_CellSize / 2.0f };
-		const float yOffset{ m_CellSize / 2.0f };
-		SetColor(0.6f, 0.7f, 1, 0.5f);
-		FillEllipse(m_TrackPosition.x + xOffset + (2 * m_CellSize), m_TrackPosition.y + yOffset - (m_TrackLineThickness), m_PosRadius, m_PosRadius);
 	}
-}
-
-void MainGame::UpdateNegativeFeedback(float elapsedSec)
-{
-	if (m_NegFeedback)
+	void MainGame::DrawPositiveFeedback() 
 	{
-		m_NegAccumulatedTime += elapsedSec;
-		m_NegFeedbackTimer -= elapsedSec;
-		m_NegRadius = (m_CellSize * ((8.0f + (4.0f * (m_NegAccumulatedTime / m_NegFeedbackTimerValue))) / 10)) / 2;
-		// 8/10 of cell + 4/10 * m_accumulated/m_feedback -> range [ 8/10 cell , 12/10 cell ]
-
-		if (m_NegFeedbackTimer <= 0)
+		if (m_PosFeedback) 
 		{
-			m_NegFeedbackTimer = m_NegFeedbackTimerValue;
-			m_NegAccumulatedTime = 0;
-			m_NegFeedback = false;
+			const float xOffset{ m_CellSize / 2.0f };
+			const float yOffset{ m_CellSize / 2.0f };
+			SetColor(0.6f, 0.7f, 1, 0.5f);
+			FillEllipse(m_TrackPosition.x + xOffset + (2 * m_CellSize), m_TrackPosition.y + yOffset - (m_TrackLineThickness), m_PosRadius, m_PosRadius);
+		}
+	}
+	void MainGame::UpdateNegativeFeedback(float elapsedSec)
+	{
+		if (m_NegFeedback)
+		{
+			m_NegAccumulatedTime += elapsedSec;
+			m_NegFeedbackTimer -= elapsedSec;
+			m_NegRadius = (m_CellSize * ((8.0f + (4.0f * (m_NegAccumulatedTime / m_NegFeedbackTimerValue))) / 10)) / 2;
+			// 8/10 of cell + 4/10 * m_accumulated/m_feedback -> range [ 8/10 cell , 12/10 cell ]
+
+			if (m_NegFeedbackTimer <= 0)
+			{
+				m_NegFeedbackTimer = m_NegFeedbackTimerValue;
+				m_NegAccumulatedTime = 0;
+				m_NegFeedback = false;
+			}
+		}
+
+
+	}
+	void MainGame::DrawNegativeFeedback()
+	{
+		if (m_NegFeedback)
+		{
+			const float xOffset{ m_CellSize / 2.0f };
+			const float yOffset{ m_CellSize / 2.0f };
+			SetColor(1, 0.5f, 0.5f, 0.5f);
+			FillEllipse(m_TrackPosition.x + xOffset + (2 * m_CellSize), m_TrackPosition.y + yOffset - (m_TrackLineThickness), m_NegRadius, m_NegRadius);
+		}
+	}
+	#pragma endregion
+
+	void MainGame::UpdateMultiplierBubble(float elapsedSec) 
+	{
+		m_MultiplierBubbleTimer -= elapsedSec;
+		if (m_MultiplierBubbleTimer <= 0) 
+		{
+			if (m_IsMultiplierBubbleShowing)
+			{
+				m_IsMultiplierBubbleShowing = false;
+				m_MultiplierBubbleTimer = rand() % 10 + 2;
+			}
+			else
+			{
+				float offset{ 100 };
+				m_MultiplierBubblePoint.x = rand() % int(g_WindowWidth - (2 * m_MultiplierBubbleRadius + 2 * offset)) + m_MultiplierBubbleRadius + offset;
+				m_MultiplierBubblePoint.y = rand() % int(g_WindowHeight - (2 * m_MultiplierBubbleRadius + 2 * offset) - (m_TrackPosition.x + m_CellSize)) + m_MultiplierBubbleRadius + offset + (m_TrackPosition.x + m_CellSize);
+				m_MultiplierBubbleRadius = rand() % 50 + 10;
+				m_IsMultiplierBubbleShowing = true;
+				m_MultiplierBubbleTimer = rand() % 5 + 2;
+
+			}
+		}
+	}
+	void MainGame::DrawMultiplierBubble()
+	{
+		if (m_IsMultiplierBubbleShowing)
+		{
+			SetColor(0.3f, 0.8f, 0.8f, 0.5f);
+			FillEllipse(m_MultiplierBubblePoint, m_MultiplierBubbleRadius, m_MultiplierBubbleRadius);
+			int scale{ int(m_MultiplierBubbleRadius * 0.8f) };
+			std::string string{ "x2" };
+			float offset{ scale / 2.0f };
+			int nrChars{};
+			for (int i = 0; i < string.length(); i++)
+			{
+				nrChars++;
+			}
+			Point2f textPos{ m_MultiplierBubblePoint.x - nrChars*offset, m_MultiplierBubblePoint.y - offset};
+			FillText(string, textPos, scale);
 		}
 	}
 
-
-}
-
-void MainGame::DrawNegativeFeedback()
-{
-	if (m_NegFeedback)
-	{
-		const float xOffset{ m_CellSize / 2.0f };
-		const float yOffset{ m_CellSize / 2.0f };
-		SetColor(1, 0.5f, 0.5f, 0.5f);
-		FillEllipse(m_TrackPosition.x + xOffset + (2 * m_CellSize), m_TrackPosition.y + yOffset - (m_TrackLineThickness), m_NegRadius, m_NegRadius);
-	}
-}
 #pragma endregion Menu
 
 #pragma region Menu

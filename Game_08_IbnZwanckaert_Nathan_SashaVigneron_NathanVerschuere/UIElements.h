@@ -11,7 +11,7 @@ public:
 	Point2f Pos, Pos2, Pos3, Size;
 	Rectf r;
 	Texture* t;
-	float scale;
+	float scale{};
 	bool isActive{};
 };
 

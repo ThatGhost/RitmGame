@@ -5,11 +5,11 @@
 //Basic game functions
 #pragma region gameFunctions											
 void Start()
-{
-	SetVolume(1);
+{ 
+	SetVolume(0.3f);
 	InitializeGameAssets();
-	g_MainGame.Start();
-	g_MainMenu.Start();
+	if (g_Scene == 1)g_MainGame.Start();
+	else if (g_Scene == 0)g_MainMenu.Start();
 }
 
 void Draw()
@@ -17,10 +17,10 @@ void Draw()
 	ClearBackground();
 	switch (g_Scene)
 	{
-	case 0:
+	case 1:
 		g_MainGame.Draw();
 		break;
-	case 1:
+	case 0:
 		g_MainMenu.Draw();
 		break;
 	}
@@ -28,14 +28,14 @@ void Draw()
 
 void Update(float elapsedSec)
 {
-	g_MainGame.Update(elapsedSec);
-	g_MainMenu.Update(elapsedSec);
+	if(g_Scene == 1)g_MainGame.Update(elapsedSec);
+	else if (g_Scene == 0)g_MainMenu.Update(elapsedSec);
 }
 
 void End()
 {
-	g_MainGame.End();
-	g_MainMenu.End();
+	if (g_Scene == 1)g_MainGame.End();
+	else if (g_Scene==0)g_MainMenu.End();
 	DeleteGameAssets();
 }
 #pragma endregion gameFunctions

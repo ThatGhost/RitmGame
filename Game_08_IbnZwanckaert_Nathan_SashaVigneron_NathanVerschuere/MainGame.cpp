@@ -295,8 +295,18 @@ void MainMenu::Start() {
 }
 
 void MainMenu::Draw() {
-	DrawTexture(*GetTexture("Background.png"), Point2f(0, 0));
-
+	DrawTexture(*GetTexture("BackgroundMenu.png"), Point2f(0, 0));
+	//std::cout << (int)GetTexture("Background.png")->height << '\n';
+	int widthButton{ 800 }, heightButton{ (int)GetTexture("Background.png")->height / 6 }, margin{30};
+	for (size_t i = 0; i < 3; i++)
+	{
+		widthButton -= 80;
+		Point2f posButton{ g_WindowWidth - widthButton , 
+			g_WindowHeight / 2 - margin - heightButton / 2 - heightButton + (heightButton + margin) * i  -100};
+		if(i==0)UIButton(posButton, GetTexture("StillDreaming.png"), 70);
+		else if(i==1) UIButton(posButton, GetTexture("Towerz.png"), 70);
+		else UIButton(posButton, GetTexture("Tenno.png"), 70);
+	}
 }
 
 void MainMenu::End() {

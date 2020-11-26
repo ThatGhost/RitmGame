@@ -85,7 +85,7 @@ bool AddEndScore(int& score) {
 }
 
 void InitializeGameAssets() {
-	const std::string assetsPath{"Assets/"};
+	const std::string assetsPath{"Assets/sprites/"};
 	struct dirent* entry;
 	DIR* dir = opendir(assetsPath.c_str());
 

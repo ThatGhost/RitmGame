@@ -3,7 +3,6 @@
 
 extern float g_WindowHeight;
 extern float g_WindowWidth;
-
 extern InputS Input;
 
 using namespace utils;
@@ -28,12 +27,47 @@ void MainGame::Draw()
 
 }
 
+
+void MainGame::End() 
+{
+
+}
+
+//int timerTimes{}; // DEBUG
+void MainGame::Update(float elapsedSec) 
+{
+	m_TotalLevelTime += elapsedSec;
+	if (!m_FinishedSong && m_TotalLevelTime >= GetNextDuck()) {
+		SpawnDuck();
+		m_FinishedSong = NextStamp();
+	}
+
+	m_Timer -= elapsedSec;
+	if (m_Timer <= 0)
+	{
+		//timerTimes++;
+		UpdateDucks();
+		CheckDucks();
+		m_Timer = g_TimerValue;
+		//if (timerTimes == 3)	// DEBUG
+		//{						// DEBUG
+		//	SpawnDuck();		// DEBUG
+		//	timerTimes = 0;		// DEBUG
+		//}						// DEBUG
+	}
+
+	CheckInput();
+	UpdatePositiveFeedback(elapsedSec);
+	UpdateNegativeFeedback(elapsedSec);
+}
 void MainGame::SpawnDuck()
 {
 	m_DuckArray[g_DuckArraySize - 1].value = 1;
-	m_DuckArray[g_DuckArraySize - 1].color = Color4f(GetRand(0.0f,1.0f), GetRand(0.0f, 1.0f), GetRand(0.0f, 1.0f), 0.5f );
+	m_DuckArray[g_DuckArraySize - 1].color = Color4f(GetRand(0.0f, 1.0f), GetRand(0.0f, 1.0f), GetRand(0.0f, 1.0f), 0.5f);
 	m_DuckArray[g_DuckArraySize - 1].offset = Point2f(float(rand() % 20 - 5), float(rand() % 20 - 5));
 }
+
+//private functions
 void MainGame::UpdateDucks()
 {
 	for (int i = 0; i < g_DuckArraySize; i++)
@@ -46,9 +80,10 @@ void MainGame::UpdateDucks()
 		Swap(m_DuckArray, i, i + 1);
 	}
 }
-void MainGame::CheckDucks() 
+
+void MainGame::CheckDucks()
 {
-	if (m_DuckArray[1].value == 1) 
+	if (m_DuckArray[1].value == 1)
 	{
 		m_DuckArray[1].value = 0;
 		PlaySoundEffect("place.wav");
@@ -74,6 +109,7 @@ void MainGame::DrawTrack()
 
 	DrawTexture(*GetTexture("Duck1.png"), duckRect);
 }
+
 void MainGame::DrawGrid(Point2f startPos, float width, float height, int gridSize)
 {
 	m_CellSize = width / gridSize;
@@ -85,19 +121,20 @@ void MainGame::DrawGrid(Point2f startPos, float width, float height, int gridSiz
 	DrawRect(startPos.x + (m_CellSize * 2), startPos.y, m_CellSize, g_TrackHeight, m_TrackLineThickness);
 	SetColor(0.3f, 0.2f, 0.3f);
 }
+
 void MainGame::DrawDucks(const Duck array[])
 {
 	const float duckSize{ 100 };
-	const float xOffset{ (m_CellSize - duckSize)/2 };
+	const float xOffset{ (m_CellSize - duckSize) / 2 };
 
 	for (int i = 2; i < g_DuckArraySize; i++)
 	{
-		if (array[i].value == 1) 
+		if (array[i].value == 1)
 		{
 
 			Rectf duckRect{ m_TrackPosition.x + xOffset + (i * m_CellSize) + m_DuckArray[g_DuckArraySize - 1].offset.x,
 							m_TrackPosition.y - (m_TrackLineThickness / 2) + m_DuckArray[g_DuckArraySize - 1].offset.y,
-							float(m_CellSize * 9 / 10), 
+							float(m_CellSize * 9 / 10),
 							float(m_CellSize * 9 / 10) };
 			DrawTexture(*GetTexture("Duck2.png"), duckRect);
 			//SetColor(array[i].color);
@@ -106,6 +143,7 @@ void MainGame::DrawDucks(const Duck array[])
 		SetColor(0.3f, 0.2f, 0.3f);
 	}
 }
+
 void MainGame::DrawHealth()
 {
 	float border{ 10 };
@@ -126,45 +164,18 @@ void MainGame::DrawHealth()
 	SetColor(0.8f, 0.5f, 0.4f);
 	FillRect(healthBar);
 }
-void MainGame::DrawScore() 
+
+void MainGame::DrawScore()
 {
 	float scale{ 50 };
-	float offset{ scale /2};
+	float offset{ scale / 2 };
 	int nrChars{};
 	std::string scoreString{ std::to_string(m_Score) };
 	for (int i = 0; i < scoreString.length(); i++)
 	{
 		nrChars++;
 	}
-	FillText(std::to_string(m_Score), Point2f((g_WindowWidth/2) - (nrChars * offset), g_WindowHeight - 100), scale);
-}
-
-void MainGame::End() 
-{
-
-}
-
-int timerTimes{}; // DEBUG
-void MainGame::Update(float elapsedSec) 
-{
-	
-	m_Timer -= elapsedSec;
-	if (m_Timer <= 0)
-	{
-		timerTimes++;
-		UpdateDucks();
-		CheckDucks();
-		m_Timer = g_TimerValue;
-		if (timerTimes == 3)	// DEBUG
-		{						// DEBUG
-			SpawnDuck();		// DEBUG
-			timerTimes = 0;		// DEBUG
-		}						// DEBUG
-	}
-
-	CheckInput();
-	UpdatePositiveFeedback(elapsedSec);
-	UpdateNegativeFeedback(elapsedSec);
+	FillText(std::to_string(m_Score), Point2f((g_WindowWidth / 2) - (nrChars * offset), g_WindowHeight - 100), scale);
 }
 
 void MainGame::CheckInput() 
@@ -226,67 +237,67 @@ void MainGame::CheckInput()
 	}
 	#pragma endregion
 
-
-
-	void MainGame::UpdatePositiveFeedback(float elapsedSec) 
+void MainGame::UpdatePositiveFeedback(float elapsedSec) 
+{
+	if (m_PosFeedback) 
 	{
-		if (m_PosFeedback) 
-		{
-			m_PosAccumulatedTime += elapsedSec;
-			m_PosFeedbackTimer -= elapsedSec;
-			m_PosRadius = (m_CellSize * ((8.0f + (4.0f * (m_PosAccumulatedTime / m_PosFeedbackTimerValue))) / 10)) / 2 ;
-			// 8/10 of cell + 4/10 * m_accumulated/m_feedback -> range [ 8/10 cell , 12/10 cell ]
+		m_PosAccumulatedTime += elapsedSec;
+		m_PosFeedbackTimer -= elapsedSec;
+		m_PosRadius = (m_CellSize * ((8.0f + (4.0f * (m_PosAccumulatedTime / m_PosFeedbackTimerValue))) / 10)) / 2 ;
+		// 8/10 of cell + 4/10 * m_accumulated/m_feedback -> range [ 8/10 cell , 12/10 cell ]
 
-			if (m_PosFeedbackTimer <= 0)
-			{
-				m_PosFeedbackTimer = m_PosFeedbackTimerValue;
-				m_PosAccumulatedTime = 0;
-				m_PosFeedback = false;
-			}
+		if (m_PosFeedbackTimer <= 0)
+		{
+			m_PosFeedbackTimer = m_PosFeedbackTimerValue;
+			m_PosAccumulatedTime = 0;
+			m_PosFeedback = false;
 		}
+	}
 		
 
-	}
-	void MainGame::DrawPositiveFeedback() 
+}
+
+void MainGame::DrawPositiveFeedback() 
+{
+	if (m_PosFeedback) 
 	{
-		if (m_PosFeedback) 
+		const float xOffset{ m_CellSize / 2.0f };
+		const float yOffset{ m_CellSize / 2.0f };
+		SetColor(0.6f, 0.7f, 1, 0.5f);
+		FillEllipse(m_TrackPosition.x + xOffset + (2 * m_CellSize), m_TrackPosition.y + yOffset - (m_TrackLineThickness), m_PosRadius, m_PosRadius);
+	}
+}
+
+void MainGame::UpdateNegativeFeedback(float elapsedSec)
+{
+	if (m_NegFeedback)
+	{
+		m_NegAccumulatedTime += elapsedSec;
+		m_NegFeedbackTimer -= elapsedSec;
+		m_NegRadius = (m_CellSize * ((8.0f + (4.0f * (m_NegAccumulatedTime / m_NegFeedbackTimerValue))) / 10)) / 2;
+		// 8/10 of cell + 4/10 * m_accumulated/m_feedback -> range [ 8/10 cell , 12/10 cell ]
+
+		if (m_NegFeedbackTimer <= 0)
 		{
-			const float xOffset{ m_CellSize / 2.0f };
-			const float yOffset{ m_CellSize / 2.0f };
-			SetColor(0.6f, 0.7f, 1, 0.5f);
-			FillEllipse(m_TrackPosition.x + xOffset + (2 * m_CellSize), m_TrackPosition.y + yOffset - (m_TrackLineThickness), m_PosRadius, m_PosRadius);
+			m_NegFeedbackTimer = m_NegFeedbackTimerValue;
+			m_NegAccumulatedTime = 0;
+			m_NegFeedback = false;
 		}
 	}
 
-	void MainGame::UpdateNegativeFeedback(float elapsedSec)
+
+}
+
+void MainGame::DrawNegativeFeedback()
+{
+	if (m_NegFeedback)
 	{
-		if (m_NegFeedback)
-		{
-			m_NegAccumulatedTime += elapsedSec;
-			m_NegFeedbackTimer -= elapsedSec;
-			m_NegRadius = (m_CellSize * ((8.0f + (4.0f * (m_NegAccumulatedTime / m_NegFeedbackTimerValue))) / 10)) / 2;
-			// 8/10 of cell + 4/10 * m_accumulated/m_feedback -> range [ 8/10 cell , 12/10 cell ]
-
-			if (m_NegFeedbackTimer <= 0)
-			{
-				m_NegFeedbackTimer = m_NegFeedbackTimerValue;
-				m_NegAccumulatedTime = 0;
-				m_NegFeedback = false;
-			}
-		}
-
-
+		const float xOffset{ m_CellSize / 2.0f };
+		const float yOffset{ m_CellSize / 2.0f };
+		SetColor(1, 0.5f, 0.5f, 0.5f);
+		FillEllipse(m_TrackPosition.x + xOffset + (2 * m_CellSize), m_TrackPosition.y + yOffset - (m_TrackLineThickness), m_NegRadius, m_NegRadius);
 	}
-	void MainGame::DrawNegativeFeedback()
-	{
-		if (m_NegFeedback)
-		{
-			const float xOffset{ m_CellSize / 2.0f };
-			const float yOffset{ m_CellSize / 2.0f };
-			SetColor(1, 0.5f, 0.5f, 0.5f);
-			FillEllipse(m_TrackPosition.x + xOffset + (2 * m_CellSize), m_TrackPosition.y + yOffset - (m_TrackLineThickness), m_NegRadius, m_NegRadius);
-		}
-	}
+}
 #pragma endregion Menu
 
 #pragma region Menu
@@ -303,9 +314,19 @@ void MainMenu::Draw() {
 		widthButton -= 80;
 		Point2f posButton{ g_WindowWidth - widthButton , 
 			g_WindowHeight / 2 - margin - heightButton / 2 - heightButton + (heightButton + margin) * i  -100};
-		if(i==0)UIButton(posButton, GetTexture("StillDreaming.png"), 70);
-		else if(i==1) UIButton(posButton, GetTexture("Towerz.png"), 70);
-		else UIButton(posButton, GetTexture("Tenno.png"), 70);
+		std::string name{};
+		if (i == 0) {
+			name = "StillDreaming.png";
+			if(UIButton(posButton, GetTexture(name), 70))HandleInput(name);
+		}
+		else if (i == 1) {
+			name = "Towerz.png";
+			if (UIButton(posButton, GetTexture(name), 70))HandleInput(name);
+		}
+		else {
+			name = "Tenno.png";
+			if (UIButton(posButton, GetTexture(name), 70))HandleInput(name);
+		}
 	}
 }
 
@@ -316,5 +337,11 @@ void MainMenu::End() {
 void MainMenu::Update(float elapsedSec) 
 {
 
+}
+
+void MainMenu::HandleInput(std::string& name) {
+	size_t lastPlace{ (size_t)name.length()};
+	name.resize(lastPlace-3);
+	StartLevel(name);
 }
 #pragma endregion Menu

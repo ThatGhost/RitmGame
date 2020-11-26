@@ -46,6 +46,9 @@ private:
 	float m_NegFeedbackTimer{ m_PosFeedbackTimerValue };
 	float m_NegAccumulatedTime{};
 
+	float m_TotalLevelTime{};
+	bool m_FinishedSong{};
+
 	//UpdateFunctions
 	void UpdateDucks();
 	void CheckDucks();
@@ -83,5 +86,6 @@ public:
 	void Start();
 	void End();
 private:
+	void HandleInput(std::string& name);
 };
 

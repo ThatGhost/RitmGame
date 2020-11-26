@@ -11,15 +11,15 @@ using namespace UI;
 #pragma region Game
 void MainGame::Start() 
 {
-	
+
 }
 
 void MainGame::Draw() 
 {
-	DrawTexture(*GetTexture("Background.png"),Point2f(0,0));
-
-	DrawTrack();
+	DrawTexture(*GetTexture("Background.png"), Point2f(0, 0));
 	DrawDucks(m_DuckArray);
+	DrawBackgroundOverDucks();
+	DrawTrack();
 	DrawHealth();
 	DrawScore();
 	DrawPositiveFeedback();
@@ -34,7 +34,6 @@ void MainGame::End()
 
 }
 
-//int timerTimes{}; // DEBUG
 void MainGame::Update(float elapsedSec) 
 {
 	m_TotalLevelTime += elapsedSec;
@@ -43,19 +42,9 @@ void MainGame::Update(float elapsedSec)
 		m_FinishedSong = NextStamp();
 	}
 
-	m_Timer -= elapsedSec;
-	if (m_Timer <= 0)
-	{
-		//timerTimes++;
-		UpdateDucks();
-		CheckDucks();
-		m_Timer = g_TimerValue;
-		//if (timerTimes == 3)	// DEBUG
-		//{						// DEBUG
-		//	SpawnDuck();		// DEBUG
-		//	timerTimes = 0;		// DEBUG
-		//}						// DEBUG
-	}
+
+	UpdateDucks(elapsedSec);
+	CheckDucks();
 
 	CheckInput();
 	CheckMouseInput();
@@ -66,36 +55,68 @@ void MainGame::Update(float elapsedSec)
 }
 void MainGame::SpawnDuck()
 {
-	m_DuckArray[g_DuckArraySize - 1].value = 1;
-	m_DuckArray[g_DuckArraySize - 1].color = Color4f(GetRand(0.0f, 1.0f), GetRand(0.0f, 1.0f), GetRand(0.0f, 1.0f), 0.5f);
-	m_DuckArray[g_DuckArraySize - 1].offset = Point2f(float(rand() % 20 - 5), float(rand() % 20 - 5));
+
+	int duckInt{};
+	for (int i = 0; i < g_DuckArraySize; i++)
+	{
+		if (m_DuckArray[i].value == 0) 
+		{
+			duckInt = i;
+			break;
+		}
+	}
+
+	m_DuckArray[duckInt].value = 1;
+	m_DuckArray[g_DuckArraySize - 1].yOffset = float(rand() % 20 - 5);
+	m_DuckArray[duckInt].position = Point2f(g_WindowWidth, m_TrackPosition.y - (m_TrackLineThickness / 2));
 }
 
 //private functions
-void MainGame::UpdateDucks()
+void MainGame::UpdateDucks(float elapsedSec)
 {
 	for (int i = 0; i < g_DuckArraySize; i++)
 	{
-		if (i == g_DuckArraySize - 1)
+		if (m_DuckArray[i].value == 1) 
 		{
-			m_DuckArray[i].value = 0;
-			return;
+			m_DuckArray[i].position.x -= m_DuckSpeed * elapsedSec;
 		}
-		Swap(m_DuckArray, i, i + 1);
 	}
 }
 
 void MainGame::CheckDucks()
 {
-	if (m_DuckArray[1].value == 1)
+	bool wasDuckInPlace{ false };
+	int duckInt{};
+	for (int i = 0; i < g_DuckArraySize; i++)
 	{
-		m_DuckArray[1].value = 0;
+		if (m_DuckArray[i].position.x + (m_DuckWidth / 4) < (m_TrackPosition.x + (m_CellSize * 2))) 
+		{
+			if (m_DuckArray[i].value == 1) 
+			{
+				wasDuckInPlace = true;
+				duckInt = i;
+			}
+		}
+	}
+
+	if (wasDuckInPlace)
+	{
+		m_DuckArray[duckInt].value = 0;
 		PlaySoundEffect("place.wav");
 		AddHealth(-5);
-		m_ConsequtiveGoodHits = 0;
 		m_Multiplier = 1;
 		m_NegFeedback = true;
 	}
+
+	//if (m_DuckArray[1].value == 1)
+	//{
+	//	m_DuckArray[1].value = 0;
+	//	PlaySoundEffect("place.wav");
+	//	AddHealth(-5);
+	//	m_ConsequtiveGoodHits = 0;
+	//	m_Multiplier = 1;
+	//	m_NegFeedback = true;
+	//}
 }
 
 void MainGame::DrawTrack()
@@ -119,32 +140,37 @@ void MainGame::DrawTrack()
 void MainGame::DrawGrid(Point2f startPos, float width, float height, int gridSize)
 {
 	m_CellSize = width / gridSize;
-	for (int i = 3; i < gridSize; i++)
+	m_DuckWidth = float(m_CellSize * 9 / 10);
+
+	bool wasDuckInPlace{};
+	for (int i = 0; i < g_DuckArraySize; i++)
 	{
-		DrawRect(startPos.x + (m_CellSize * i), startPos.y, m_CellSize, g_TrackHeight, m_TrackLineThickness);
+		if (m_DuckArray[i].position.x >= (m_TrackPosition.x + (m_CellSize * 2) - (m_DuckWidth / 4))
+			&& m_DuckArray[i].position.x <= (m_TrackPosition.x + (m_CellSize * 3)) + (m_DuckWidth / 4))
+		{
+			if (m_DuckArray[i].value == 1)
+			{
+				wasDuckInPlace = true;
+			}
+		}
 	}
-	(m_DuckArray[2].value == 1) ? SetColor(0.7f, 0.5f, 0.1f) : SetColor(0.5f, 0.2f, 0.3f);
+
+	(wasDuckInPlace) ? SetColor(0.7f, 0.5f, 0.1f) : SetColor(0.5f, 0.2f, 0.3f);
 	DrawRect(startPos.x + (m_CellSize * 2), startPos.y, m_CellSize, g_TrackHeight, m_TrackLineThickness);
 	SetColor(0.3f, 0.2f, 0.3f);
 }
 
 void MainGame::DrawDucks(const Duck array[])
 {
-	const float duckSize{ 100 };
-	const float xOffset{ (m_CellSize - duckSize) / 2 };
-
-	for (int i = 2; i < g_DuckArraySize; i++)
+	for (int i = 0; i < g_DuckArraySize; i++)
 	{
 		if (array[i].value == 1)
 		{
-
-			Rectf duckRect{ m_TrackPosition.x + xOffset + (i * m_CellSize) + m_DuckArray[g_DuckArraySize - 1].offset.x,
-							m_TrackPosition.y - (m_TrackLineThickness / 2) + m_DuckArray[g_DuckArraySize - 1].offset.y,
-							float(m_CellSize * 9 / 10),
-							float(m_CellSize * 9 / 10) };
+			Rectf duckRect{ m_DuckArray[i].position.x,
+							m_DuckArray[i].position.y - (m_TrackLineThickness / 2) + m_DuckArray[i].yOffset,
+							m_DuckWidth,
+							m_DuckWidth };
 			DrawTexture(*GetTexture("Duck2.png"), duckRect);
-			//SetColor(array[i].color);
-			//FillRect(duckRect);
 		}
 		SetColor(0.3f, 0.2f, 0.3f);
 	}
@@ -154,23 +180,34 @@ void MainGame::CheckInput()
 {
 	if (Input.keyUp == SDLK_z)
 	{
-		//std::cout << "Z was pressed\n";
-		if (m_DuckArray[2].value == 1) 
+		bool wasDuckInPlace{ false };
+		int duckInt{};
+		for (int i = 0; i < g_DuckArraySize; i++)
 		{
-			m_DuckArray[2].value = 0; // Remove Duck
+			if (m_DuckArray[i].position.x >= (m_TrackPosition.x + (m_CellSize * 2) - (m_DuckWidth / 4))
+				&& m_DuckArray[i].position.x <= (m_TrackPosition.x + (m_CellSize * 3)) + (m_DuckWidth / 4))
+			{
+				if (m_DuckArray[i].value == 1) 
+				{
+					wasDuckInPlace = true;
+					duckInt = i;
+				}
+			}
+		}
+
+		if (wasDuckInPlace) 
+		{
+			m_DuckArray[duckInt].value = 0;
 			m_PosFeedback = true;
 			PlaySoundEffect("beat.wav");
 			AddScore(rand() % 51);
-			m_ConsequtiveGoodHits++;
 			m_MultiplierTimer = m_MultiplierCooldown;
 			AddHealth(3);
 		}
-		else
+		else 
 		{
-			//std::cout << "No duck there!\n";
 			m_NegFeedback = true;
 			AddHealth(-5);
-			m_ConsequtiveGoodHits = 0;
 			m_Multiplier = 1;
 			PlaySoundEffect("place.wav");
 		}
@@ -189,8 +226,15 @@ void MainGame::CheckMouseInput()
 	}
 }
 
-	#pragma region Health&Score
+void MainGame::DrawBackgroundOverDucks() 
+{
+	Rectf srcRect{ m_TrackPosition.x + (m_CellSize * 10),g_WindowHeight - m_TrackPosition.y, m_CellSize, g_TrackHeight };
+	Rectf destRect{ m_TrackPosition.x + (m_CellSize * 10), m_TrackPosition.y, m_CellSize, g_TrackHeight };
 
+	DrawTexture(*GetTexture("Background.png"), destRect, srcRect);
+}
+
+	#pragma region Health&Score
 	void MainGame::AddHealth(int amount) 
 	{
 		m_Health += amount;
@@ -239,6 +283,7 @@ void MainGame::CheckMouseInput()
 	{
 		m_Multiplier *= 2;
 		if (m_Multiplier > m_MaxMultiplierFactor) m_Multiplier = m_MaxMultiplierFactor;
+		m_MultiplierTimer = m_MultiplierCooldown;
 	}
 	void MainGame::UpdateMultiplier(float elapsedSec) 
 	{
@@ -262,6 +307,46 @@ void MainGame::CheckMouseInput()
 		}
 		FillText("x" + std::to_string(m_Multiplier), Point2f((g_WindowWidth - 100) - (nrChars * offset), g_WindowHeight - 100), scale);
 	}
+	void MainGame::UpdateMultiplierBubble(float elapsedSec)
+	{
+		m_MultiplierBubbleTimer -= elapsedSec;
+		if (m_MultiplierBubbleTimer <= 0)
+		{
+			if (m_IsMultiplierBubbleShowing)
+			{
+				m_IsMultiplierBubbleShowing = false;
+				m_MultiplierBubbleTimer = rand() % 10 + 2;
+			}
+			else
+			{
+				float offset{ 100 };
+				m_MultiplierBubblePoint.x = rand() % int(g_WindowWidth - (2 * m_MultiplierBubbleRadius + 2 * offset)) + m_MultiplierBubbleRadius + offset;
+				m_MultiplierBubblePoint.y = rand() % int(g_WindowHeight - (2 * m_MultiplierBubbleRadius + 2 * offset) - (m_TrackPosition.x + m_CellSize)) + m_MultiplierBubbleRadius + offset + (m_TrackPosition.x + m_CellSize);
+				m_MultiplierBubbleRadius = rand() % 50 + 10;
+				m_IsMultiplierBubbleShowing = true;
+				m_MultiplierBubbleTimer = rand() % 5 + 2;
+
+			}
+		}
+	}
+	void MainGame::DrawMultiplierBubble()
+	{
+		if (m_IsMultiplierBubbleShowing)
+		{
+			SetColor(0.3f, 0.8f, 0.8f, 0.5f);
+			FillEllipse(m_MultiplierBubblePoint, m_MultiplierBubbleRadius, m_MultiplierBubbleRadius);
+			int scale{ int(m_MultiplierBubbleRadius * 0.8f) };
+			std::string string{ "x2" };
+			float offset{ scale / 2.0f };
+			int nrChars{};
+			for (int i = 0; i < string.length(); i++)
+			{
+				nrChars++;
+			}
+			Point2f textPos{ m_MultiplierBubblePoint.x - nrChars * offset, m_MultiplierBubblePoint.y - offset };
+			FillText(string, textPos, scale);
+		}
+	}
 	#pragma endregion
 	#pragma region Utils
 	float MainGame::GetDistance(const Point2f& point1, const Point2f& point2)
@@ -269,16 +354,6 @@ void MainGame::CheckMouseInput()
 		float result{};
 		result = sqrtf(powf(point2.x - point1.x, 2) + powf(point2.y - point1.y, 2));
 		return result;
-	}
-	
-	void MainGame::Swap(Duck array[], int idx1, int idx2)
-	{
-		int tempVar{ array[idx1].value };
-		Color4f colorVar{ array[idx1].color };
-		array[idx1].value = array[idx2].value;
-		array[idx1].color = array[idx2].color;
-		array[idx2].value = tempVar;
-		array[idx2].color = colorVar;
 	}
 
 	float MainGame::GetRand(float min, float max)
@@ -351,46 +426,7 @@ void MainGame::CheckMouseInput()
 	}
 	#pragma endregion
 
-	void MainGame::UpdateMultiplierBubble(float elapsedSec) 
-	{
-		m_MultiplierBubbleTimer -= elapsedSec;
-		if (m_MultiplierBubbleTimer <= 0) 
-		{
-			if (m_IsMultiplierBubbleShowing)
-			{
-				m_IsMultiplierBubbleShowing = false;
-				m_MultiplierBubbleTimer = rand() % 10 + 2;
-			}
-			else
-			{
-				float offset{ 100 };
-				m_MultiplierBubblePoint.x = rand() % int(g_WindowWidth - (2 * m_MultiplierBubbleRadius + 2 * offset)) + m_MultiplierBubbleRadius + offset;
-				m_MultiplierBubblePoint.y = rand() % int(g_WindowHeight - (2 * m_MultiplierBubbleRadius + 2 * offset) - (m_TrackPosition.x + m_CellSize)) + m_MultiplierBubbleRadius + offset + (m_TrackPosition.x + m_CellSize);
-				m_MultiplierBubbleRadius = rand() % 50 + 10;
-				m_IsMultiplierBubbleShowing = true;
-				m_MultiplierBubbleTimer = rand() % 5 + 2;
 
-			}
-		}
-	}
-	void MainGame::DrawMultiplierBubble()
-	{
-		if (m_IsMultiplierBubbleShowing)
-		{
-			SetColor(0.3f, 0.8f, 0.8f, 0.5f);
-			FillEllipse(m_MultiplierBubblePoint, m_MultiplierBubbleRadius, m_MultiplierBubbleRadius);
-			int scale{ int(m_MultiplierBubbleRadius * 0.8f) };
-			std::string string{ "x2" };
-			float offset{ scale / 2.0f };
-			int nrChars{};
-			for (int i = 0; i < string.length(); i++)
-			{
-				nrChars++;
-			}
-			Point2f textPos{ m_MultiplierBubblePoint.x - nrChars*offset, m_MultiplierBubblePoint.y - offset};
-			FillText(string, textPos, scale);
-		}
-	}
 
 #pragma endregion Menu
 

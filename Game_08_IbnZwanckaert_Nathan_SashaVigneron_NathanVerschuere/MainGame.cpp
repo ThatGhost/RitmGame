@@ -24,16 +24,13 @@ void MainGame::Draw()
 	DrawScore();
 	DrawPositiveFeedback();
 	DrawNegativeFeedback();
-
 }
-
 
 void MainGame::End() 
 {
 
 }
 
-//int timerTimes{}; // DEBUG
 void MainGame::Update(float elapsedSec) 
 {
 	m_TotalLevelTime += elapsedSec;
@@ -45,15 +42,9 @@ void MainGame::Update(float elapsedSec)
 	m_Timer -= elapsedSec;
 	if (m_Timer <= 0)
 	{
-		//timerTimes++;
 		UpdateDucks();
 		CheckDucks();
 		m_Timer = g_TimerValue;
-		//if (timerTimes == 3)	// DEBUG
-		//{						// DEBUG
-		//	SpawnDuck();		// DEBUG
-		//	timerTimes = 0;		// DEBUG
-		//}						// DEBUG
 	}
 
 	CheckInput();

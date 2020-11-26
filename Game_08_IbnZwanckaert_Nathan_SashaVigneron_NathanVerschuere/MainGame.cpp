@@ -426,8 +426,6 @@ void MainGame::DrawBackgroundOverDucks()
 	}
 	#pragma endregion
 
-
-
 #pragma endregion Menu
 
 #pragma region Menu

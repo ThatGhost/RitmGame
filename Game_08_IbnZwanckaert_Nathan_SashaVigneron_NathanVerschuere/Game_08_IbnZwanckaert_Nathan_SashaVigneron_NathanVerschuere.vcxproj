@@ -155,6 +155,7 @@
   <ItemGroup>
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="LevelManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="pch.cpp">
@@ -172,6 +173,7 @@
   <ItemGroup>
     <ClInclude Include="Core.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="LevelManager.h" />
     <ClInclude Include="MainGame.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="SaveAndLoadManager.h" />

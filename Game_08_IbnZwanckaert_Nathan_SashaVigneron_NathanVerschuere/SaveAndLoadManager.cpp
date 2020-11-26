@@ -34,6 +34,18 @@ namespace SLUtils {
 		return Data;
 	}
 
+	std::vector<float> ReadFileForfloat(std::string path) {
+		std::ifstream DataStream{ path };
+		std::vector<float> Data{};
+		for (std::string line; getline(DataStream, line); )
+		{
+			float score{ std::stof(line) };
+			Data.push_back(score);
+		}
+		DataStream.close();
+		return Data;
+	}
+
 	std::vector<int> ReplaceValue(std::vector<int>& vector, int& value, int place) {
 		if (place >= (int)vector.size())return vector;
 		if (place < 0)return vector;
@@ -85,7 +97,7 @@ bool AddEndScore(int& score) {
 }
 
 void InitializeGameAssets() {
-	const std::string assetsPath{"Assets/"};
+	const std::string assetsPath{"Assets/sprites/"};
 	struct dirent* entry;
 	DIR* dir = opendir(assetsPath.c_str());
 

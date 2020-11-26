@@ -23,13 +23,16 @@ void MainGame::Draw()
 	DrawDucks(m_DuckArray);
 	DrawHealth();
 	DrawScore();
+	DrawPositiveFeedback();
+	DrawNegativeFeedback();
+
 }
 
 void MainGame::SpawnDuck()
 {
 	m_DuckArray[g_DuckArraySize - 1].value = 1;
 	m_DuckArray[g_DuckArraySize - 1].color = Color4f(GetRand(0.0f,1.0f), GetRand(0.0f, 1.0f), GetRand(0.0f, 1.0f), 0.5f );
-	m_DuckArray[g_DuckArraySize - 1].offset = Point2f(float(rand() % 11 - 5), float(rand() % 11 - 5));
+	m_DuckArray[g_DuckArraySize - 1].offset = Point2f(float(rand() % 20 - 5), float(rand() % 20 - 5));
 }
 void MainGame::UpdateDucks()
 {
@@ -50,6 +53,7 @@ void MainGame::CheckDucks()
 		m_DuckArray[1].value = 0;
 		PlaySoundEffect("place.wav");
 		AddHealth(-5);
+		m_NegFeedback = true;
 	}
 }
 
@@ -159,6 +163,8 @@ void MainGame::Update(float elapsedSec)
 	}
 
 	CheckInput();
+	UpdatePositiveFeedback(elapsedSec);
+	UpdateNegativeFeedback(elapsedSec);
 }
 
 void MainGame::CheckInput() 
@@ -169,13 +175,15 @@ void MainGame::CheckInput()
 		if (m_DuckArray[2].value == 1) 
 		{
 			m_DuckArray[2].value = 0; // Remove Duck
-
+			m_PosFeedback = true;
+			PlaySoundEffect("beat.wav");
 			AddScore(rand() % 51);
 			AddHealth(3);
 		}
 		else
 		{
 			//std::cout << "No duck there!\n";
+			m_NegFeedback = true;
 			AddHealth(-5);
 			PlaySoundEffect("place.wav");
 		}
@@ -218,6 +226,67 @@ void MainGame::CheckInput()
 	}
 	#pragma endregion
 
+
+
+	void MainGame::UpdatePositiveFeedback(float elapsedSec) 
+	{
+		if (m_PosFeedback) 
+		{
+			m_PosAccumulatedTime += elapsedSec;
+			m_PosFeedbackTimer -= elapsedSec;
+			m_PosRadius = (m_CellSize * ((8.0f + (4.0f * (m_PosAccumulatedTime / m_PosFeedbackTimerValue))) / 10)) / 2 ;
+			// 8/10 of cell + 4/10 * m_accumulated/m_feedback -> range [ 8/10 cell , 12/10 cell ]
+
+			if (m_PosFeedbackTimer <= 0)
+			{
+				m_PosFeedbackTimer = m_PosFeedbackTimerValue;
+				m_PosAccumulatedTime = 0;
+				m_PosFeedback = false;
+			}
+		}
+		
+
+	}
+	void MainGame::DrawPositiveFeedback() 
+	{
+		if (m_PosFeedback) 
+		{
+			const float xOffset{ m_CellSize / 2.0f };
+			const float yOffset{ m_CellSize / 2.0f };
+			SetColor(0.6f, 0.7f, 1, 0.5f);
+			FillEllipse(m_TrackPosition.x + xOffset + (2 * m_CellSize), m_TrackPosition.y + yOffset - (m_TrackLineThickness), m_PosRadius, m_PosRadius);
+		}
+	}
+
+	void MainGame::UpdateNegativeFeedback(float elapsedSec)
+	{
+		if (m_NegFeedback)
+		{
+			m_NegAccumulatedTime += elapsedSec;
+			m_NegFeedbackTimer -= elapsedSec;
+			m_NegRadius = (m_CellSize * ((8.0f + (4.0f * (m_NegAccumulatedTime / m_NegFeedbackTimerValue))) / 10)) / 2;
+			// 8/10 of cell + 4/10 * m_accumulated/m_feedback -> range [ 8/10 cell , 12/10 cell ]
+
+			if (m_NegFeedbackTimer <= 0)
+			{
+				m_NegFeedbackTimer = m_NegFeedbackTimerValue;
+				m_NegAccumulatedTime = 0;
+				m_NegFeedback = false;
+			}
+		}
+
+
+	}
+	void MainGame::DrawNegativeFeedback()
+	{
+		if (m_NegFeedback)
+		{
+			const float xOffset{ m_CellSize / 2.0f };
+			const float yOffset{ m_CellSize / 2.0f };
+			SetColor(1, 0.5f, 0.5f, 0.5f);
+			FillEllipse(m_TrackPosition.x + xOffset + (2 * m_CellSize), m_TrackPosition.y + yOffset - (m_TrackLineThickness), m_NegRadius, m_NegRadius);
+		}
+	}
 #pragma endregion Menu
 
 #pragma region Menu

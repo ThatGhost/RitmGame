@@ -45,9 +45,11 @@ void MainGame::Update(float elapsedSec)
 	if (!m_FinishedSong && m_TotalLevelTime >= GetNextDuck()) {
 		SpawnDuck();
 		m_totalDucks++;
-		m_FinishedSong = NextStamp();
+		NextStamp();
 	}
-	if (m_FinishedSong) {
+
+	if (m_TotalLevelTime > GetEndSong())
+	{
 		g_Scene = 2;
 		EndSong(m_Score, float(m_ducksHit / m_totalDucks), AddEndScore(m_Score));
 	}

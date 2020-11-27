@@ -68,6 +68,7 @@ using namespace utils;
 
 extern irrklang::ISoundEngine* engine;
 extern Texture g_Font;
+extern Texture g_FontRed;
 
 /// <summary>
 /// Adds score to scoreboard in right place. 
@@ -121,6 +122,7 @@ void InitializeGameAssets() {
 	}
 	closedir(dir);
 	TextureFromFile("Assets/Font.png", g_Font);
+	TextureFromFile("Assets/FontRed.png", g_FontRed);
 }
 
 void DeleteGameAssets() {
@@ -132,12 +134,10 @@ void DeleteGameAssets() {
 	engine->drop();
 }
 
-/// <summary>
-/// Get the texture from the name of file
-/// </summary>
-/// <param name="id"></param>
-/// <returns></returns>
 Texture* GetTexture(const std::string& id) {
 	return textureMap.find(id)->second;
 }
 
+std::vector<int> GetHighScores() {
+	return ReadFileForInt("SaveFiles/save.txt");
+}

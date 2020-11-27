@@ -60,5 +60,5 @@ namespace UI {
 	bool UIButton(Point2f Pos, Texture* t, float scale, bool Active = true);
 	void UIElipse(Point2f Pos, Point2f Size, Color4f c);
 	void UITriangle(Point2f Pos1, Point2f Pos2, Point2f Pos3, Color4f c);
-	void FillText(std::string str, Point2f pos, int scale);
+	void FillText(std::string str, Point2f pos, int scale, bool red = false);
 }

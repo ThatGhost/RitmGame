@@ -3,7 +3,7 @@ class WinScreen {
 public:
 	void Draw();
 	void Update(float elapsedSec);
-	int score;
+	int score{};
 	float percent;
 	bool HighScore;
 };
@@ -16,5 +16,4 @@ public:
 	float percent;
 };
 
-void DrawScreen();
-
+void DrawScreen(bool won, int& score, float& percent, bool highscore = false);

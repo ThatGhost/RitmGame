@@ -198,6 +198,7 @@ void Run()
 
 			//input reset
 			{
+				Input.keyDown = 0;
 				if (Input.keyDown != 0)Input.keyDownTime += elapsedSeconds;
 				if (Input.keyUp != 0) {
 					Input.keyDown = 0;

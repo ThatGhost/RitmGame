@@ -11,3 +11,4 @@ bool AddEndScore(int& score);
 void InitializeGameAssets();
 void DeleteGameAssets();
 Texture* GetTexture(const std::string& id);
+std::vector<int> GetHighScores();

@@ -17,6 +17,8 @@ float g_WindowHeight{ 720 };
 INT8 g_Scene{};
 MainGame g_MainGame{};
 MainMenu g_MainMenu{};
+LoseScreen g_LoseScreen{};
+WinScreen  g_WinScreen{};
 // Declare your own functions here
 #pragma endregion ownDeclarations
 

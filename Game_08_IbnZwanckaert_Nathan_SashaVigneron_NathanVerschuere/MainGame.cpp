@@ -4,14 +4,24 @@
 extern float g_WindowHeight;
 extern float g_WindowWidth;
 extern InputS Input;
+extern INT8 g_Scene;
 
 using namespace utils;
 using namespace UI;
 
 #pragma region Game
-void MainGame::Start() 
-{
-
+void MainGame::reset() {
+	for (size_t i = 0; i < g_DuckArraySize; i++)
+	{
+		m_DuckArray[i].value = 0;
+	}
+	m_Score = 0;
+	m_Multiplier = 1;
+	m_TotalLevelTime = 0;
+	m_FinishedSong = false;
+	m_Health = 100;
+	m_totalDucks = 0;
+	m_ducksHit = 0;
 }
 
 void MainGame::Draw() 
@@ -28,21 +38,19 @@ void MainGame::Draw()
 	DrawMultiplierBubble();
 }
 
-
-void MainGame::End() 
-{
-
-}
-
 void MainGame::Update(float elapsedSec) 
 {
 	m_TotalLevelTime += elapsedSec;
 	//std::cout << m_TotalLevelTime << '\n';
 	if (!m_FinishedSong && m_TotalLevelTime >= GetNextDuck()) {
 		SpawnDuck();
+		m_totalDucks++;
 		m_FinishedSong = NextStamp();
 	}
-
+	if (m_FinishedSong) {
+		g_Scene = 2;
+		EndSong(m_Score, float(m_ducksHit / m_totalDucks), AddEndScore(m_Score));
+	}
 
 	UpdateDucks(elapsedSec);
 	CheckDucks();
@@ -54,6 +62,7 @@ void MainGame::Update(float elapsedSec)
 	UpdateMultiplier(elapsedSec);
 	UpdateMultiplierBubble(elapsedSec);
 }
+
 void MainGame::SpawnDuck()
 {
 
@@ -104,7 +113,7 @@ void MainGame::CheckDucks()
 	{
 		m_DuckArray[duckInt].value = 0;
 		PlaySoundEffect("place.wav");
-		AddHealth(-5);
+		AddHealth(-15);
 		m_Multiplier = 1;
 		m_NegFeedback = true;
 	}
@@ -204,6 +213,7 @@ void MainGame::CheckInput()
 			AddScore(rand() % 51);
 			m_MultiplierTimer = m_MultiplierCooldown;
 			AddHealth(3);
+			m_ducksHit++;
 		}
 		else 
 		{
@@ -239,9 +249,14 @@ void MainGame::DrawBackgroundOverDucks()
 	void MainGame::AddHealth(int amount) 
 	{
 		m_Health += amount;
-		if (m_Health < 0) m_Health = 0;
+		if (m_Health <= 0) {
+			EndSong(m_Score,float(m_ducksHit/m_totalDucks));			
+			g_Scene = 3;
+			m_Health = 0;
+		}
 		if (m_Health > 100) m_Health = 100;
 	}
+
 	void MainGame::DrawHealth()
 	{
 		float border{ 10 };
@@ -267,6 +282,7 @@ void MainGame::DrawBackgroundOverDucks()
 	{
 		m_Score += amount * m_Multiplier;
 	}
+
 	void MainGame::DrawScore()
 	{
 		float scale{ 50 };
@@ -427,13 +443,9 @@ void MainGame::DrawBackgroundOverDucks()
 	}
 	#pragma endregion
 
-#pragma endregion Menu
+#pragma endregion MainGame
 
 #pragma region Menu
-void MainMenu::Start() {
-
-}
-
 void MainMenu::Draw() {
 	DrawTexture(*GetTexture("BackgroundMenu.png"), Point2f(0, 0));
 	//std::cout << (int)GetTexture("Background.png")->height << '\n';
@@ -460,10 +472,6 @@ void MainMenu::Draw() {
 
 		if (UIButton(posButton, GetTexture(name), 70))HandleInput(name);
 	}
-}
-
-void MainMenu::End() {
-
 }
 
 void MainMenu::Update(float elapsedSec) 

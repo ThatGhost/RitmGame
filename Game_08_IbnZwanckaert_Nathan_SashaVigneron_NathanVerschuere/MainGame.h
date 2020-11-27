@@ -7,10 +7,8 @@ class MainGame
 public:
 	void Draw();
 	void Update(float elapsedSec);
-	void Start();
-	void End();
-
 	void SpawnDuck();
+	void reset();
 
 	float g_TimerValue{ 0.3f };
 	const float g_TrackHeight{ 100 };
@@ -25,8 +23,6 @@ private:
 
 	float m_DuckSpeed{494.0f}; // 2 sec from Spawn to click
 	float m_DuckWidth{};
-
-	float m_Timer{ g_TimerValue };
 
 	//TrackVars
 	const int m_GridSize{ 10 };
@@ -82,6 +78,8 @@ private:
 	Point2f m_MultiplierBubblePoint{0,0};
 	float m_MultiplierBubbleTimer{};
 	float m_MultiplierBubbleRadius{};
+	float m_totalDucks{};
+	float m_ducksHit{};
 	bool m_IsMultiplierBubbleShowing{};
 
 	void AddMultiplier();
@@ -108,8 +106,6 @@ class MainMenu
 public:
 	void Draw();
 	void Update(float elapsedSec);
-	void Start();
-	void End();
 private:
 	void HandleInput(std::string& name);
 };

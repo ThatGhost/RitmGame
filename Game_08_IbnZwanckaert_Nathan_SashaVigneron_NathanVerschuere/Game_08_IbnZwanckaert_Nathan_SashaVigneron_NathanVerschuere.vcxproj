@@ -154,6 +154,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Core.cpp" />
+    <ClCompile Include="endScreens.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="LevelManager.cpp" />
     <ClCompile Include="main.cpp" />
@@ -172,6 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core.h" />
+    <ClInclude Include="endScreens.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="LevelManager.h" />
     <ClInclude Include="MainGame.h" />

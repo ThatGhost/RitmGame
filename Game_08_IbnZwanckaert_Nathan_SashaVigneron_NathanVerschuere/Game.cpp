@@ -8,8 +8,6 @@ void Start()
 { 
 	SetVolume(0.3f);
 	InitializeGameAssets();
-	if (g_Scene == 1)g_MainGame.Start();
-	else if (g_Scene == 0)g_MainMenu.Start();
 }
 
 void Draw()
@@ -23,19 +21,38 @@ void Draw()
 	case 0:
 		g_MainMenu.Draw();
 		break;
+	case 2:
+		g_WinScreen.Draw();
+		break;
+	case 3:
+		g_LoseScreen.Draw();
+		break;
+		break;
 	}
 }
 
 void Update(float elapsedSec)
 {
-	if(g_Scene == 1)g_MainGame.Update(elapsedSec);
-	else if (g_Scene == 0)g_MainMenu.Update(elapsedSec);
+	switch (g_Scene)
+	{
+	case 1:
+		g_MainGame.Update(elapsedSec);
+		break;
+	case 0:
+		g_MainMenu.Update(elapsedSec);
+		break;
+	case 2:
+		g_WinScreen.Update(elapsedSec);
+		break;
+	case 3:
+		g_LoseScreen.Update(elapsedSec);
+		break;
+		break;
+	}
 }
 
 void End()
 {
-	if (g_Scene == 1)g_MainGame.End();
-	else if (g_Scene==0)g_MainMenu.End();
 	DeleteGameAssets();
 }
 #pragma endregion gameFunctions

@@ -37,6 +37,7 @@ void MainGame::End()
 void MainGame::Update(float elapsedSec) 
 {
 	m_TotalLevelTime += elapsedSec;
+	//std::cout << m_TotalLevelTime << '\n';
 	if (!m_FinishedSong && m_TotalLevelTime >= GetNextDuck()) {
 		SpawnDuck();
 		m_FinishedSong = NextStamp();

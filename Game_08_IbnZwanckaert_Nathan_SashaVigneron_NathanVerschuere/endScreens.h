@@ -17,3 +17,14 @@ public:
 };
 
 void DrawScreen(bool won, int& score, float& percent, bool highscore = false);
+
+class SettingsMenu {
+public: 
+	void Draw();
+	void Update(float elapsedSec);
+	void start();
+	INT8 m_Scene{};
+private:
+	void Return();
+	float volume{};
+};

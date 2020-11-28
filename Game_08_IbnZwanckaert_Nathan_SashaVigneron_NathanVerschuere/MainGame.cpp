@@ -501,7 +501,7 @@ void MainGame::DrawBackgroundOverDucks()
 void MainMenu::Draw() {
 	DrawTexture(*GetTexture("BackgroundMenu.png"), Point2f(0, 0));
 	//std::cout << (int)GetTexture("Background.png")->height << '\n';
-	int widthButton{ 800 }, heightButton{ (int)GetTexture("Background.png")->height / 6 }, margin{30};
+	int widthButton{ 1100 }, heightButton{ (int)GetTexture("Background.png")->height / 6 }, margin{30};
 	for (size_t i = 0; i < 3; i++)
 	{
 		widthButton -= 80;

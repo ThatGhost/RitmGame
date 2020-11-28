@@ -27,12 +27,20 @@ void Draw()
 	case 3:
 		g_LoseScreen.Draw();
 		break;
+	case 4:
+		g_Settings.Draw();
 		break;
 	}
 }
 
 void Update(float elapsedSec)
 {
+	if (Input.keyDown == 'i') {
+		g_Settings.m_Scene = g_Scene;
+		g_Settings.start();
+		g_Scene = 4;
+	}
+
 	switch (g_Scene)
 	{
 	case 1:
@@ -47,6 +55,8 @@ void Update(float elapsedSec)
 	case 3:
 		g_LoseScreen.Update(elapsedSec);
 		break;
+	case 4:
+		g_Settings.Update(elapsedSec);
 		break;
 	}
 }

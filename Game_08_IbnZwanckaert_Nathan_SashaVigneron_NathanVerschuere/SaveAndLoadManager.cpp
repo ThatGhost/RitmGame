@@ -13,7 +13,7 @@ namespace SLUtils {
 	std::map<std::string, Texture*> textureMap{};
 	std::vector<Texture> AllTextures{};
 
-	void WrightToFileInts(std::vector<int>& data, const std::string& path){
+	void WrightToFileInts(std::vector<int>& data, std::string& path){
 		std::ofstream DataStream{path};
 		for (int i = 0; i < (int)data.size(); i++)
 		{
@@ -22,7 +22,7 @@ namespace SLUtils {
 		DataStream.close();
 	}
 
-	std::vector<int> ReadFileForInt(std::string path){
+	std::vector<int> ReadFileForInt(std::string& path){
 		std::ifstream DataStream{ path };
 		std::vector<int> Data{};
 		for (std::string line; getline(DataStream, line); )
@@ -70,12 +70,6 @@ extern irrklang::ISoundEngine* engine;
 extern Texture g_Font;
 extern Texture g_FontRed;
 
-/// <summary>
-/// Adds score to scoreboard in right place. 
-/// return true if its the new highscore.
-/// </summary>
-/// <param name="score"></param>
-/// <returns></returns>
 bool AddEndScore(int& score) {
 	std::vector<int> AllScore{ReadFileForInt(SavePath)};
 	bool HighScore{};
@@ -139,7 +133,7 @@ Texture* GetTexture(const std::string& id) {
 }
 
 std::vector<int> GetHighScores() {
-	return ReadFileForInt("SaveFiles/save.txt");
+	return ReadFileForInt(SavePath);
 }
 
 void resetScore() {
@@ -148,5 +142,5 @@ void resetScore() {
 	{
 		empty.push_back(0);
 	}
-	WrightToFileInts(empty,"savefile/save.txt");
+	WrightToFileInts(empty,SavePath);
 }

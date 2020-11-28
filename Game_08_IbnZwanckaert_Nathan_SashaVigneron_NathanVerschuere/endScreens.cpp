@@ -1,12 +1,16 @@
 #include "pch.h"
 #include "endScreens.h"
+#include "irrKlang.h"
 using namespace UI;
 using namespace utils;
+using namespace SLUtils;
+
 extern float g_WindowHeight;
 extern float g_WindowWidth;
 extern InputS Input;
 extern INT8 g_Scene;
 extern MainGame g_MainGame;
+extern irrklang::ISoundEngine* engine;
 
 #pragma region WinScreen
 void WinScreen::Draw() {
@@ -67,8 +71,32 @@ void DrawScreen(bool won, int& score, float& percent, bool highscore) {
 	}
 
 	float scaleButton{ 20 };
-	if (UIButton(Point2f(g_WindowWidth/2 - (GetTexture("return.png")->width * (scaleButton / 100.0f) + 50), scaleButton),GetTexture("return.png"),50)) {
+	if (UIButton(Point2f(-200, scaleButton), GetTexture("return.png"), 50)) {
 		g_Scene = 0;
 		g_MainGame.reset();
 	}
+}
+
+void SettingsMenu::Draw() {
+	UIRectangle(Point2f(0, 0), Point2f(g_WindowWidth, g_WindowHeight), Color4f(38 / 255.0f, 32 / 255.0f, 60 / 255.0f, 1));
+	float scaleButton{ 20 };
+	if (UIButton(Point2f(-200, scaleButton), GetTexture("return.png"), 50)) {
+		Return();
+	}
+}
+
+void SettingsMenu::Update(float elapsedSec) {
+
+}
+
+void SettingsMenu::Return() {
+	g_Scene = m_Scene;
+	engine->setAllSoundsPaused(false);
+}
+
+void SettingsMenu::start() {
+	engine->setAllSoundsPaused(true);
+	std::string path{"Savefiles/settings.txt"};
+	volume = ReadFileForfloat(path)[0];
+	std::cout << volume << '\n';
 }

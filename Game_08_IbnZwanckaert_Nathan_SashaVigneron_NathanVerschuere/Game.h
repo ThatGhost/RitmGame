@@ -17,6 +17,7 @@ MainGame g_MainGame{};
 MainMenu g_MainMenu{};
 LoseScreen g_LoseScreen{};
 WinScreen  g_WinScreen{};
+SettingsMenu g_Settings{};
 // Declare your own functions here
 #pragma endregion ownDeclarations
 

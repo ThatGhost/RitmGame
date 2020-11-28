@@ -118,16 +118,10 @@ namespace UI {
 		data_.p = &g_UiText;
 		data_.Pos = Pos;
 		data_.t = t;
-		data_.scale = scale;
+		data_.scale = (int)scale;
 		if (Input.mousePos.x > Pos.x && Input.mousePos.x < Pos.x + t->width  * (scale / 100.0f) 
 		 && Input.mousePos.y > Pos.y && Input.mousePos.y < Pos.y + t->height * (scale / 100.0f)) {
-			//data_.c = Color4f(0, 0, 0, 0.3f);
-			//data_;
-			//data_.p = &g_UiRect;
-			//data_.Pos = Pos;
-			//data_.Size = Point2f(t->width, t->height);
-			//g_UIData.push_back(data_);
-			data_.scale = scale += 10;
+			data_.scale += 10;
 		}
 		g_UIData.push_back(data_);
 		return (Input.ClickUp == Input.MB1 && Input.mousePos.x > Pos.x && Input.mousePos.x < Pos.x + t->width && Input.mousePos.y > Pos.y && Input.mousePos.y < Pos.y + t->height);

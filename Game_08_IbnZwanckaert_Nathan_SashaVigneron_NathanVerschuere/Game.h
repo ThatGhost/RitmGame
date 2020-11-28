@@ -10,8 +10,6 @@ float g_WindowWidth{ 1280 };
 float g_WindowHeight{ 720 };
 #pragma endregion gameInformation
 
-
-
 #pragma region ownDeclarations
 // Declare your own global variables here
 INT8 g_Scene{};

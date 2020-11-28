@@ -59,7 +59,7 @@ void DrawScreen(bool won, int& score, float& percent, bool highscore) {
 
 	//highscore area
 	std::vector<int> scores{GetHighScores()};
-	for (int i = scores.size()-1; i >= 0; i--)
+	for (int i = int(scores.size()-1); i >= 0; i--)
 	{
 		int size{ 10 };
 		if (i == 0)size += 10;

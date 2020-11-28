@@ -301,7 +301,7 @@ void MainGame::DrawBackgroundOverDucks()
 		{
 			nrChars++;
 		}
-		FillText(std::to_string(m_Score), Point2f((g_WindowWidth / 2) - (nrChars * offset), g_WindowHeight - 100), scale);
+		FillText(std::to_string(m_Score), Point2f((g_WindowWidth / 2) - (nrChars * offset), g_WindowHeight - 100), int(scale));
 	}
 
 	void MainGame::AddMultiplier() 
@@ -330,7 +330,7 @@ void MainGame::DrawBackgroundOverDucks()
 		{
 			nrChars++;
 		}
-		FillText("x" + std::to_string(m_Multiplier), Point2f((g_WindowWidth - 100) - (nrChars * offset), g_WindowHeight - 100), scale);
+		FillText("x" + std::to_string(m_Multiplier), Point2f((g_WindowWidth - 100) - (nrChars * offset), g_WindowHeight - 100), int(scale));
 	}
 	void MainGame::UpdateMultiplierBubble(float elapsedSec)
 	{
@@ -340,16 +340,16 @@ void MainGame::DrawBackgroundOverDucks()
 			if (m_IsMultiplierBubbleShowing)
 			{
 				m_IsMultiplierBubbleShowing = false;
-				m_MultiplierBubbleTimer = rand() % 10 + 2;
+				m_MultiplierBubbleTimer = float(rand() % 10 + 2);
 			}
 			else
 			{
 				float offset{ 100 };
 				m_MultiplierBubblePoint.x = rand() % int(g_WindowWidth - (2 * m_MultiplierBubbleRadius + 2 * offset)) + m_MultiplierBubbleRadius + offset;
 				m_MultiplierBubblePoint.y = rand() % int(g_WindowHeight - (2 * m_MultiplierBubbleRadius + 2 * offset) - (m_TrackPosition.x + m_CellSize)) + m_MultiplierBubbleRadius + offset + (m_TrackPosition.x + m_CellSize);
-				m_MultiplierBubbleRadius = rand() % 50 + 10;
+				m_MultiplierBubbleRadius = float(rand() % 50 + 10);
 				m_IsMultiplierBubbleShowing = true;
-				m_MultiplierBubbleTimer = rand() % 5 + 2;
+				m_MultiplierBubbleTimer = float(rand() % 5 + 2);
 
 			}
 		}
@@ -439,6 +439,7 @@ void MainGame::DrawBackgroundOverDucks()
 
 
 	}
+
 	void MainGame::DrawNegativeFeedback()
 	{
 		if (m_NegFeedback)
@@ -449,6 +450,7 @@ void MainGame::DrawBackgroundOverDucks()
 			FillEllipse(m_TrackPosition.x + xOffset + (2 * m_CellSize), m_TrackPosition.y + yOffset - (m_TrackLineThickness), m_NegRadius, m_NegRadius);
 		}
 	}
+
 	void MainGame::UpdatePopups(float elapsedSec) 
 	{
 		if (m_IsPopupActive)
@@ -479,7 +481,6 @@ void MainGame::DrawBackgroundOverDucks()
 				m_PopupPosition.y = rand() % int(g_WindowHeight - (m_MaxPopupSize * aspectRatioY + 2 * offset + m_TrackPosition.x + m_CellSize)) + offset + m_TrackPosition.x + m_CellSize;
 				m_IsPopupActive = true;
 				m_PopupTimer = m_PopupTimerValue;
-
 			}
 		}
 	}

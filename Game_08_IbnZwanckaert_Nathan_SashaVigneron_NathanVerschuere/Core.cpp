@@ -198,6 +198,7 @@ void Run()
 
 			//input reset
 			{
+				Input.keyDown = 0;
 				if (Input.keyDown != 0)Input.keyDownTime += elapsedSeconds;
 				if (Input.keyUp != 0) {
 					Input.keyDown = 0;
@@ -226,7 +227,7 @@ void DrawUI() {
 		g_UIData[i].p->Pos3 = g_UIData[i].Pos3;
 		g_UIData[i].p->t = g_UIData[i].t;
 		g_UIData[i].p->r = g_UIData[i].r;
-		g_UIData[i].p->scale = g_UIData[i].scale;
+		g_UIData[i].p->scale = (float)g_UIData[i].scale;
 		g_UIData[i].p->Draw();
 	}
 	g_UIData.clear();

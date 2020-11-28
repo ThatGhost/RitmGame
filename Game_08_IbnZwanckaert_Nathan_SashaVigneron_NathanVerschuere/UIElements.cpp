@@ -51,13 +51,16 @@ UItext::UItext() {}
 
 void UItext::Draw() {
 	Point2f newScale{t->width * (scale/100.0f), t->height * (scale/100.0f)};
-	DrawTexture(*t, Rectf( Pos.x,Pos.y, newScale.x, newScale.y ));
+	Point2f newPos{Pos.x - (newScale.x - t->width), Pos.y - (newScale.y - t->height) };
+	DrawTexture(*t, Rectf(newPos.x, newPos.y, newScale.x, newScale.y ));
 }
 
 #pragma endregion
 
 #pragma region UIElements
 Texture g_Font{};
+Texture g_FontRed{};
+
 namespace UI {
 
 	void UIRectangle(Point2f Pos, Point2f Size, Color4f c) {
@@ -116,24 +119,23 @@ namespace UI {
 		data_.p = &g_UiText;
 		data_.Pos = Pos;
 		data_.t = t;
-		data_.scale = scale;
-		if (Input.mousePos.x > Pos.x && Input.mousePos.x < Pos.x + t->width  * (scale / 100.0f) 
-		 && Input.mousePos.y > Pos.y && Input.mousePos.y < Pos.y + t->height * (scale / 100.0f)) {
-			//data_.c = Color4f(0, 0, 0, 0.3f);
-			//data_;
-			//data_.p = &g_UiRect;
-			//data_.Pos = Pos;
-			//data_.Size = Point2f(t->width, t->height);
-			//g_UIData.push_back(data_);
-			data_.scale = scale += 10;
+		data_.scale = (int)scale;
+		Point2f newScale{ t->width * (scale / 100.0f), t->height * (scale / 100.0f) };
+		Point2f newPos{ Pos.x - (newScale.x - t->width), Pos.y - (newScale.y - t->height) };
+		if (Input.mousePos.x > newPos.x && Input.mousePos.x < newPos.x + newScale.x
+		 && Input.mousePos.y > newPos.y && Input.mousePos.y < newPos.y + newScale.y) {
+			data_.scale += 10;
 		}
+
 		g_UIData.push_back(data_);
 		return (Input.ClickUp == Input.MB1 && Input.mousePos.x > Pos.x && Input.mousePos.x < Pos.x + t->width && Input.mousePos.y > Pos.y && Input.mousePos.y < Pos.y + t->height);
 	}
 
-	void FillText(std::string str, Point2f pos, int scale) {
+	void FillText(std::string str, Point2f pos, int scale, bool red) {
 		float sc{128};
 		int spacing{(int)(scale * 0.95f )};
+		Texture* t{ &g_Font };
+		red ? t = &g_FontRed : &g_Font;
 		for (int i = 0; i < str.length(); i++)
 		{
 			if ((int)str[i] != ' ') {
@@ -141,7 +143,7 @@ namespace UI {
 				if (str[i] == '!')ascii = '{' - '#';
 				if (str[i] == '"')ascii = '|' - '#';
 				int p{ spacing * i }; // size texture
-				DrawTexture(g_Font, Rectf(pos.x + p, pos.y, scale/ 100.0f * sc, scale / 100.0f * sc), 
+				DrawTexture(*t, Rectf(pos.x + p, pos.y, scale/ 100.0f * sc, scale / 100.0f * sc), 
 					Rectf(float((ascii % 15) * sc),	float((1 + ascii / 15) * sc), sc, sc));
 			}
 		}

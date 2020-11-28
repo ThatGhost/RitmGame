@@ -4,14 +4,24 @@
 extern float g_WindowHeight;
 extern float g_WindowWidth;
 extern InputS Input;
+extern INT8 g_Scene;
 
 using namespace utils;
 using namespace UI;
 
 #pragma region Game
-void MainGame::Start() 
-{
-
+void MainGame::reset() {
+	for (size_t i = 0; i < g_DuckArraySize; i++)
+	{
+		m_DuckArray[i].value = 0;
+	}
+	m_Score = 0;
+	m_Multiplier = 1;
+	m_TotalLevelTime = 0;
+	m_FinishedSong = false;
+	m_Health = 100;
+	m_totalDucks = 0;
+	m_ducksHit = 0;
 }
 
 void MainGame::Draw() 
@@ -19,6 +29,8 @@ void MainGame::Draw()
 	DrawTexture(*GetTexture("Background.png"), Point2f(0, 0));
 	DrawDucks(m_DuckArray);
 	DrawBackgroundOverDucks();
+	DrawTimeBar();
+
 	DrawTrack();
 	DrawHealth();
 	DrawScore();
@@ -26,22 +38,24 @@ void MainGame::Draw()
 	DrawNegativeFeedback();
 	DrawMultiplier();
 	DrawMultiplierBubble();
-}
-
-
-void MainGame::End() 
-{
-
+	DrawPopups();
 }
 
 void MainGame::Update(float elapsedSec) 
 {
 	m_TotalLevelTime += elapsedSec;
+	//std::cout << m_TotalLevelTime << '\n';
 	if (!m_FinishedSong && m_TotalLevelTime >= GetNextDuck()) {
 		SpawnDuck();
-		m_FinishedSong = NextStamp();
+		m_totalDucks++;
+		if(NextStamp())m_FinishedSong = true;
 	}
 
+	if (m_TotalLevelTime > GetEndSong())
+	{
+		g_Scene = 2;
+		EndSong(m_Score, float(m_ducksHit / m_totalDucks), AddEndScore(m_Score));
+	}
 
 	UpdateDucks(elapsedSec);
 	CheckDucks();
@@ -52,7 +66,9 @@ void MainGame::Update(float elapsedSec)
 	UpdateNegativeFeedback(elapsedSec);
 	UpdateMultiplier(elapsedSec);
 	UpdateMultiplierBubble(elapsedSec);
+	UpdatePopups(elapsedSec);
 }
+
 void MainGame::SpawnDuck()
 {
 
@@ -103,20 +119,11 @@ void MainGame::CheckDucks()
 	{
 		m_DuckArray[duckInt].value = 0;
 		PlaySoundEffect("place.wav");
-		AddHealth(-5);
+		AddHealth(-15);
 		m_Multiplier = 1;
+		m_ConsequtiveGoodHits = 0;
 		m_NegFeedback = true;
 	}
-
-	//if (m_DuckArray[1].value == 1)
-	//{
-	//	m_DuckArray[1].value = 0;
-	//	PlaySoundEffect("place.wav");
-	//	AddHealth(-5);
-	//	m_ConsequtiveGoodHits = 0;
-	//	m_Multiplier = 1;
-	//	m_NegFeedback = true;
-	//}
 }
 
 void MainGame::DrawTrack()
@@ -176,6 +183,15 @@ void MainGame::DrawDucks(const Duck array[])
 	}
 }
 
+void MainGame::DrawTimeBar() 
+{
+	float width{ (m_TrackWidth + (m_TrackLineThickness/2)) };
+	Rectf timeBar{ m_TrackPosition.x, m_TrackPosition.y + g_TrackHeight + 20, width - (width * (m_TotalLevelTime / GetEndSong())), 15};
+
+	SetColor(0.3f, 0.2f, 0.3f);
+	FillRect(timeBar);
+}
+
 void MainGame::CheckInput() 
 {
 	if (Input.keyUp == SDLK_z)
@@ -201,12 +217,15 @@ void MainGame::CheckInput()
 			m_PosFeedback = true;
 			PlaySoundEffect("beat.wav");
 			AddScore(rand() % 51);
+			m_ConsequtiveGoodHits++;
 			m_MultiplierTimer = m_MultiplierCooldown;
 			AddHealth(3);
+			m_ducksHit++;
 		}
 		else 
 		{
 			m_NegFeedback = true;
+			m_ConsequtiveGoodHits = 0;
 			AddHealth(-5);
 			m_Multiplier = 1;
 			PlaySoundEffect("place.wav");
@@ -238,9 +257,14 @@ void MainGame::DrawBackgroundOverDucks()
 	void MainGame::AddHealth(int amount) 
 	{
 		m_Health += amount;
-		if (m_Health < 0) m_Health = 0;
+		if (m_Health <= 0) {
+			EndSong(m_Score,float(m_ducksHit/m_totalDucks));			
+			g_Scene = 3;
+			m_Health = 0;
+		}
 		if (m_Health > 100) m_Health = 100;
 	}
+
 	void MainGame::DrawHealth()
 	{
 		float border{ 10 };
@@ -266,6 +290,7 @@ void MainGame::DrawBackgroundOverDucks()
 	{
 		m_Score += amount * m_Multiplier;
 	}
+
 	void MainGame::DrawScore()
 	{
 		float scale{ 50 };
@@ -276,7 +301,7 @@ void MainGame::DrawBackgroundOverDucks()
 		{
 			nrChars++;
 		}
-		FillText(std::to_string(m_Score), Point2f((g_WindowWidth / 2) - (nrChars * offset), g_WindowHeight - 100), scale);
+		FillText(std::to_string(m_Score), Point2f((g_WindowWidth / 2) - (nrChars * offset), g_WindowHeight - 100), int(scale));
 	}
 
 	void MainGame::AddMultiplier() 
@@ -305,7 +330,7 @@ void MainGame::DrawBackgroundOverDucks()
 		{
 			nrChars++;
 		}
-		FillText("x" + std::to_string(m_Multiplier), Point2f((g_WindowWidth - 100) - (nrChars * offset), g_WindowHeight - 100), scale);
+		FillText("x" + std::to_string(m_Multiplier), Point2f((g_WindowWidth - 100) - (nrChars * offset), g_WindowHeight - 100), int(scale));
 	}
 	void MainGame::UpdateMultiplierBubble(float elapsedSec)
 	{
@@ -315,16 +340,16 @@ void MainGame::DrawBackgroundOverDucks()
 			if (m_IsMultiplierBubbleShowing)
 			{
 				m_IsMultiplierBubbleShowing = false;
-				m_MultiplierBubbleTimer = rand() % 10 + 2;
+				m_MultiplierBubbleTimer = float(rand() % 10 + 2);
 			}
 			else
 			{
 				float offset{ 100 };
 				m_MultiplierBubblePoint.x = rand() % int(g_WindowWidth - (2 * m_MultiplierBubbleRadius + 2 * offset)) + m_MultiplierBubbleRadius + offset;
 				m_MultiplierBubblePoint.y = rand() % int(g_WindowHeight - (2 * m_MultiplierBubbleRadius + 2 * offset) - (m_TrackPosition.x + m_CellSize)) + m_MultiplierBubbleRadius + offset + (m_TrackPosition.x + m_CellSize);
-				m_MultiplierBubbleRadius = rand() % 50 + 10;
+				m_MultiplierBubbleRadius = float(rand() % 50 + 10);
 				m_IsMultiplierBubbleShowing = true;
-				m_MultiplierBubbleTimer = rand() % 5 + 2;
+				m_MultiplierBubbleTimer = float(rand() % 5 + 2);
 
 			}
 		}
@@ -414,6 +439,7 @@ void MainGame::DrawBackgroundOverDucks()
 
 
 	}
+
 	void MainGame::DrawNegativeFeedback()
 	{
 		if (m_NegFeedback)
@@ -424,42 +450,80 @@ void MainGame::DrawBackgroundOverDucks()
 			FillEllipse(m_TrackPosition.x + xOffset + (2 * m_CellSize), m_TrackPosition.y + yOffset - (m_TrackLineThickness), m_NegRadius, m_NegRadius);
 		}
 	}
+
+	void MainGame::UpdatePopups(float elapsedSec) 
+	{
+		if (m_IsPopupActive)
+		{
+			m_PopupSize = (m_MaxPopupSize -m_MinPopupSize) * (m_PopupAccumulatedTime / m_PopupTimerValue) + m_MinPopupSize;
+			m_PopupAccumulatedTime += elapsedSec;
+			m_PopupTimer -= elapsedSec;
+			
+			if (m_PopupTimer <= 0)
+			{
+				m_IsPopupActive = false;
+				m_PopupTimer = m_PopupTimerValue;
+				m_PopupAccumulatedTime = 0;
+			}
+		}
+		else 
+		{
+			if (m_ConsequtiveGoodHits >= m_ConsequtiveHitsForPopup) 
+			{
+				m_ConsequtiveGoodHits = 0;
+				m_ConsequtiveHitsForPopup = rand() % 5 + 3;
+
+				float offset{ 100 };
+				m_CurrPopupTexture = *GetTexture(m_PopupNames[rand() % g_PopupNamesArraySize]);
+				float aspectRatioY{ m_CurrPopupTexture.height / m_CurrPopupTexture.width };
+				m_PopupSize = 100;
+				m_PopupPosition.x = rand() % int(g_WindowWidth - (m_MaxPopupSize + 2 * offset)) + offset;
+				m_PopupPosition.y = rand() % int(g_WindowHeight - (m_MaxPopupSize * aspectRatioY + 2 * offset + m_TrackPosition.x + m_CellSize)) + offset + m_TrackPosition.x + m_CellSize;
+				m_IsPopupActive = true;
+				m_PopupTimer = m_PopupTimerValue;
+			}
+		}
+	}
+	void MainGame::DrawPopups() 
+	{
+		if (m_IsPopupActive)
+		{
+			float aspectRatioY{ m_CurrPopupTexture.height / m_CurrPopupTexture.width };
+			Rectf destRect{ m_PopupPosition.x, m_PopupPosition.y, m_PopupSize, m_PopupSize * aspectRatioY };
+			DrawTexture(m_CurrPopupTexture, destRect);
+		}
+	}
 	#pragma endregion
 
-#pragma endregion Menu
+#pragma endregion MainGame
 
 #pragma region Menu
-void MainMenu::Start() {
-
-}
-
 void MainMenu::Draw() {
 	DrawTexture(*GetTexture("BackgroundMenu.png"), Point2f(0, 0));
 	//std::cout << (int)GetTexture("Background.png")->height << '\n';
-	int widthButton{ 800 }, heightButton{ (int)GetTexture("Background.png")->height / 6 }, margin{30};
+	int widthButton{ 1100 }, heightButton{ (int)GetTexture("Background.png")->height / 6 }, margin{30};
 	for (size_t i = 0; i < 3; i++)
 	{
 		widthButton -= 80;
 		Point2f posButton{ g_WindowWidth - widthButton , 
 			g_WindowHeight / 2 - margin - heightButton / 2 - heightButton + (heightButton + margin) * i  -100};
 		std::string name{};
-		if (i == 0) {
+
+		switch (i)
+		{
+		case 0:
+			name = "FloatingAway.png";
+			break;
+		case 1:
 			name = "StillDreaming.png";
-			if(UIButton(posButton, GetTexture(name), 70))HandleInput(name);
+			break;
+		case 2:
+			name = "DarkChocolate.png";
+			break;
 		}
-		else if (i == 1) {
-			name = "Towerz.png";
-			if (UIButton(posButton, GetTexture(name), 70))HandleInput(name);
-		}
-		else {
-			name = "Tenno.png";
-			if (UIButton(posButton, GetTexture(name), 70))HandleInput(name);
-		}
+
+		if (UIButton(posButton, GetTexture(name), 70))HandleInput(name);
 	}
-}
-
-void MainMenu::End() {
-
 }
 
 void MainMenu::Update(float elapsedSec) 

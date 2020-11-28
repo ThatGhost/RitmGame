@@ -22,7 +22,7 @@ namespace SLUtils {
 		DataStream.close();
 	}
 
-	std::vector<int> ReadFileForInt(std::string path){
+	std::vector<int> ReadFileForInt(std::string& path){
 		std::ifstream DataStream{ path };
 		std::vector<int> Data{};
 		for (std::string line; getline(DataStream, line); )
@@ -68,13 +68,8 @@ using namespace utils;
 
 extern irrklang::ISoundEngine* engine;
 extern Texture g_Font;
+extern Texture g_FontRed;
 
-/// <summary>
-/// Adds score to scoreboard in right place. 
-/// return true if its the new highscore.
-/// </summary>
-/// <param name="score"></param>
-/// <returns></returns>
 bool AddEndScore(int& score) {
 	std::vector<int> AllScore{ReadFileForInt(SavePath)};
 	bool HighScore{};
@@ -121,6 +116,7 @@ void InitializeGameAssets() {
 	}
 	closedir(dir);
 	TextureFromFile("Assets/Font.png", g_Font);
+	TextureFromFile("Assets/FontRed.png", g_FontRed);
 }
 
 void DeleteGameAssets() {
@@ -132,12 +128,19 @@ void DeleteGameAssets() {
 	engine->drop();
 }
 
-/// <summary>
-/// Get the texture from the name of file
-/// </summary>
-/// <param name="id"></param>
-/// <returns></returns>
 Texture* GetTexture(const std::string& id) {
 	return textureMap.find(id)->second;
 }
 
+std::vector<int> GetHighScores() {
+	return ReadFileForInt(SavePath);
+}
+
+void resetScore() {
+	std::vector<int> empty{};
+	for (size_t i = 0; i < 10; i++)
+	{
+		empty.push_back(0);
+	}
+	WrightToFileInts(empty,SavePath);
+}

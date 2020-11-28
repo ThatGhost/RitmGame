@@ -71,7 +71,7 @@ void DrawScreen(bool won, int& score, float& percent, bool highscore) {
 	}
 
 	float scaleButton{ 20 };
-	if (UIButton(Point2f(-200, scaleButton), GetTexture("return.png"), 50)) {
+	if (UIButton(Point2f(-200, -75), GetTexture("return.png"), 50)) {
 		g_Scene = 0;
 		g_MainGame.reset();
 	}

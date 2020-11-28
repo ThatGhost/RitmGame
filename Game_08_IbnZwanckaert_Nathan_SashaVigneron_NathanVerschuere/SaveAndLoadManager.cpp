@@ -13,7 +13,7 @@ namespace SLUtils {
 	std::map<std::string, Texture*> textureMap{};
 	std::vector<Texture> AllTextures{};
 
-	void WrightToFileInts(std::vector<int>& data, std::string& path){
+	void WrightToFileInts(std::vector<int>& data, const std::string& path){
 		std::ofstream DataStream{path};
 		for (int i = 0; i < (int)data.size(); i++)
 		{
@@ -140,4 +140,13 @@ Texture* GetTexture(const std::string& id) {
 
 std::vector<int> GetHighScores() {
 	return ReadFileForInt("SaveFiles/save.txt");
+}
+
+void resetScore() {
+	std::vector<int> empty{};
+	for (size_t i = 0; i < 10; i++)
+	{
+		empty.push_back(0);
+	}
+	WrightToFileInts(empty,"savefile/save.txt");
 }

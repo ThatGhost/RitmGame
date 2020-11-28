@@ -12,3 +12,4 @@ void InitializeGameAssets();
 void DeleteGameAssets();
 Texture* GetTexture(const std::string& id);
 std::vector<int> GetHighScores();
+void resetScore();

@@ -71,16 +71,41 @@ void DrawScreen(bool won, int& score, float& percent, bool highscore) {
 	}
 
 	float scaleButton{ 20 };
-	if (UIButton(Point2f(-200, -75), GetTexture("return.png"), 50)) {
+	if (UIButton(Point2f(g_WindowWidth / 2 - 275, scaleButton), GetTexture("return.png"), 50)) {
 		g_Scene = 0;
 		g_MainGame.reset();
 	}
 }
 
 void SettingsMenu::Draw() {
-	UIRectangle(Point2f(0, 0), Point2f(g_WindowWidth, g_WindowHeight), Color4f(38 / 255.0f, 32 / 255.0f, 60 / 255.0f, 1));
-	float scaleButton{ 20 };
-	if (UIButton(Point2f(-200, scaleButton), GetTexture("return.png"), 50)) {
+	float margin{18};
+	SetColor(38 / 255.0f, 32 / 255.0f, 60 / 255.0f, 1);
+	FillRect(0,0, g_WindowWidth, g_WindowHeight); //bg
+
+	//show input
+	UITexture(Point2f(0,g_WindowHeight/2), GetTexture("Input.png"),100);
+
+	//volume setting
+	FillText("volume",Point2f(margin,g_WindowHeight/2-50),40,true);
+	FillText("0",Point2f(260,g_WindowHeight/2 - 40),20,true);
+	FillText("100",Point2f(g_WindowWidth - 100, g_WindowHeight/2 - 40),20,true);
+
+	float v{ DrawSlider(volume,Point2f(330, g_WindowHeight / 2 - 40),Point2f(800,20)) };
+	SetVolume(v);
+	if (volume != v) {
+		volume = v;
+		std::vector<float> volumeData_{};
+		volumeData_.push_back(v);
+		WrightToFileFloats(volumeData_,"Savefiles/settings.txt");
+	}
+
+	//reset highscores
+	if (UIButton(Point2f(margin, 150), GetTexture("reset.png"), 30)) {
+		resetScore();
+	}
+
+	//return
+	if (UIButton(Point2f(g_WindowWidth / 2 - 275, 20), GetTexture("return.png"), 50)) {
 		Return();
 	}
 }
@@ -98,5 +123,20 @@ void SettingsMenu::start() {
 	engine->setAllSoundsPaused(true);
 	std::string path{"Savefiles/settings.txt"};
 	volume = ReadFileForfloat(path)[0];
-	std::cout << volume << '\n';
+}
+
+float SettingsMenu::DrawSlider(float prev, Point2f pos, Point2f size) {
+	SetColor(201 / 255.0f, 106 / 255.0f, 56 / 255.0f);
+	FillRect(pos.x,pos.y,size.x,size.y);
+	FillEllipse(pos.x + size.x * prev, pos.y + size.y / 2, size.y * 1.5f, size.y * 1.5f);
+	float output{prev};
+	if (Input.ClickDown == Input.MB1)
+	{
+		if (Input.mousePos.x > pos.x && Input.mousePos.x < pos.x + size.x
+		&&  Input.mousePos.y > pos.y - size.y / 2 && Input.mousePos.y < pos.y + size.y + size.y / 2) {
+			output = (Input.mousePos.x - pos.x) / size.x;
+		}
+	}
+	std::cout << output << '\n';
+	return output;
 }

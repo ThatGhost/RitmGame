@@ -13,8 +13,17 @@ namespace SLUtils {
 	std::map<std::string, Texture*> textureMap{};
 	std::vector<Texture> AllTextures{};
 
-	void WrightToFileInts(std::vector<int>& data, std::string& path){
+	void WrightToFileInts(std::vector<int>& data,const std::string& path){
 		std::ofstream DataStream{path};
+		for (int i = 0; i < (int)data.size(); i++)
+		{
+			DataStream << std::to_string(data[i]) << '\n';
+		}
+		DataStream.close();
+	}
+
+	void WrightToFileFloats(std::vector<float>& data, const std::string& path) {
+		std::ofstream DataStream{ path };
 		for (int i = 0; i < (int)data.size(); i++)
 		{
 			DataStream << std::to_string(data[i]) << '\n';

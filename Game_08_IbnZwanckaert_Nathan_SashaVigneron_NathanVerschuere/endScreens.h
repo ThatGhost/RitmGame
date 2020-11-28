@@ -27,4 +27,5 @@ public:
 private:
 	void Return();
 	float volume{};
+	float DrawSlider(float prev, Point2f pos, Point2f size);
 };

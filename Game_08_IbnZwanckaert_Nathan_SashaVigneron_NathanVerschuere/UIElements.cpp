@@ -51,8 +51,7 @@ UItext::UItext() {}
 
 void UItext::Draw() {
 	Point2f newScale{t->width * (scale/100.0f), t->height * (scale/100.0f)};
-	Point2f newPos{Pos.x - (newScale.x - t->width), Pos.y - (newScale.y - t->height) };
-	DrawTexture(*t, Rectf(newPos.x, newPos.y, newScale.x, newScale.y ));
+	DrawTexture(*t, Rectf(Pos.x, Pos.y, newScale.x, newScale.y ));
 }
 
 #pragma endregion
@@ -91,12 +90,12 @@ namespace UI {
 		g_UIData.push_back(data_);
 	}
 
-	void UITexture(Point2f Pos, Texture* t, const Rectf r) {
+	void UITexture(Point2f Pos, Texture* t, const float scale) {
 		AllData data_{};
 		data_.p = &g_UiText;
 		data_.t = t;
-		data_.r = r;
 		data_.Pos = Pos;
+		data_.scale = scale;
 		g_UIData.push_back(data_);
 	}
 
@@ -106,11 +105,10 @@ namespace UI {
 		data_.p = &g_UiRect;
 		data_.Pos = Pos;
 		data_.Size = Size;
-		g_UIData.push_back(data_);
 		if (Active || (Input.ClickDown == Input.MB1 && Input.mousePos.x > Pos.x && Input.mousePos.x < Pos.x + Size.x && Input.mousePos.y > Pos.y && Input.mousePos.y < Pos.y + Size.y)) {
 			data_.c = Color4f(0,0,0,0.3f);
-			g_UIData.push_back(data_);
 		}
+		g_UIData.push_back(data_);
 		return (Input.ClickUp == Input.MB1 && Input.mousePos.x > Pos.x && Input.mousePos.x < Pos.x + Size.x && Input.mousePos.y > Pos.y && Input.mousePos.y < Pos.y + Size.y);
 	}
 
@@ -121,9 +119,8 @@ namespace UI {
 		data_.t = t;
 		data_.scale = (int)scale;
 		Point2f newScale{ t->width * (scale / 100.0f), t->height * (scale / 100.0f) };
-		Point2f newPos{ Pos.x - (newScale.x - t->width), Pos.y - (newScale.y - t->height) };
-		if (Input.mousePos.x > newPos.x && Input.mousePos.x < newPos.x + newScale.x
-		 && Input.mousePos.y > newPos.y && Input.mousePos.y < newPos.y + newScale.y) {
+		if (Input.mousePos.x > Pos.x && Input.mousePos.x < Pos.x + newScale.x
+		 && Input.mousePos.y > Pos.y && Input.mousePos.y < Pos.y + newScale.y) {
 			data_.scale += 10;
 		}
 

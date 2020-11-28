@@ -194,7 +194,7 @@ void MainGame::DrawTimeBar()
 
 void MainGame::CheckInput() 
 {
-	if (Input.keyUp == SDLK_z)
+	if (Input.keyUp == SDLK_SPACE)
 	{
 		bool wasDuckInPlace{ false };
 		int duckInt{};
@@ -310,6 +310,7 @@ void MainGame::DrawBackgroundOverDucks()
 		if (m_Multiplier > m_MaxMultiplierFactor) m_Multiplier = m_MaxMultiplierFactor;
 		m_MultiplierTimer = m_MultiplierCooldown;
 	}
+
 	void MainGame::UpdateMultiplier(float elapsedSec) 
 	{
 		m_MultiplierTimer -= elapsedSec;
@@ -320,6 +321,7 @@ void MainGame::DrawBackgroundOverDucks()
 			m_Multiplier = 1;
 		}
 	}
+
 	void MainGame::DrawMultiplier() 
 	{
 		float scale{ 50 };
@@ -332,6 +334,7 @@ void MainGame::DrawBackgroundOverDucks()
 		}
 		FillText("x" + std::to_string(m_Multiplier), Point2f((g_WindowWidth - 100) - (nrChars * offset), g_WindowHeight - 100), int(scale));
 	}
+
 	void MainGame::UpdateMultiplierBubble(float elapsedSec)
 	{
 		m_MultiplierBubbleTimer -= elapsedSec;
@@ -354,6 +357,7 @@ void MainGame::DrawBackgroundOverDucks()
 			}
 		}
 	}
+
 	void MainGame::DrawMultiplierBubble()
 	{
 		if (m_IsMultiplierBubbleShowing)
@@ -410,6 +414,7 @@ void MainGame::DrawBackgroundOverDucks()
 		
 
 	}
+
 	void MainGame::DrawPositiveFeedback() 
 	{
 		if (m_PosFeedback) 
@@ -420,6 +425,7 @@ void MainGame::DrawBackgroundOverDucks()
 			FillEllipse(m_TrackPosition.x + xOffset + (2 * m_CellSize), m_TrackPosition.y + yOffset - (m_TrackLineThickness), m_PosRadius, m_PosRadius);
 		}
 	}
+
 	void MainGame::UpdateNegativeFeedback(float elapsedSec)
 	{
 		if (m_NegFeedback)
@@ -484,6 +490,7 @@ void MainGame::DrawBackgroundOverDucks()
 			}
 		}
 	}
+
 	void MainGame::DrawPopups() 
 	{
 		if (m_IsPopupActive)
@@ -501,7 +508,7 @@ void MainGame::DrawBackgroundOverDucks()
 void MainMenu::Draw() {
 	DrawTexture(*GetTexture("BackgroundMenu.png"), Point2f(0, 0));
 	//std::cout << (int)GetTexture("Background.png")->height << '\n';
-	int widthButton{ 1100 }, heightButton{ (int)GetTexture("Background.png")->height / 6 }, margin{30};
+	int widthButton{ 750 }, heightButton{ (int)GetTexture("Background.png")->height / 6 }, margin{30};
 	for (size_t i = 0; i < 3; i++)
 	{
 		widthButton -= 80;

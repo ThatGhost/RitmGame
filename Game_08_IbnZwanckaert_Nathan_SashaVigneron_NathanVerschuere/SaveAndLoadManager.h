@@ -1,7 +1,8 @@
 #pragma once
 
 namespace SLUtils {
-	void WrightToFileInts(std::vector<int>& data, std::string& path);
+	void WrightToFileInts(std::vector<int>& data,const std::string& path);
+	void WrightToFileFloats(std::vector<float>& data,const std::string& path);
 	std::vector<int> ReadFileForInt(std::string& path);
 	std::vector<float> ReadFileForfloat(std::string path);
 	std::vector<int> ReplaceValue(std::vector<int>& vector, int& value, int place);

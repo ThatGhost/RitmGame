@@ -11,7 +11,7 @@ public:
 	Point2f Pos, Pos2, Pos3, Size;
 	Rectf r;
 	Texture* t;
-	float scale{};
+	float scale{100};
 	bool isActive{};
 };
 
@@ -56,7 +56,7 @@ struct AllData {
 namespace UI {
 	void UIRectangle(Point2f Pos, Point2f Size, Color4f c);
 	bool UIButton(Point2f Pos, Point2f Size, Color4f c, bool Active = true);
-	void UITexture(Point2f Pos, Texture* t, const Rectf r = Rectf());
+	void UITexture(Point2f Pos, Texture* t, const float scale);
 	bool UIButton(Point2f Pos, Texture* t, float scale, bool Active = true);
 	void UIElipse(Point2f Pos, Point2f Size, Color4f c);
 	void UITriangle(Point2f Pos1, Point2f Pos2, Point2f Pos3, Color4f c);

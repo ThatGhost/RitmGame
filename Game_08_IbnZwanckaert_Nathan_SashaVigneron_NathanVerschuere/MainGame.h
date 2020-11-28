@@ -1,5 +1,7 @@
 #pragma once
 const int g_DuckArraySize{ 10 };
+const int g_PopupNamesArraySize{ 2 };
+
 
 
 class MainGame
@@ -61,6 +63,7 @@ private:
 	void DrawTrack();
 	void DrawHealth();
 	void DrawScore();
+	void DrawTimeBar();
 
 	//Health&Score
 	int m_Score{};
@@ -68,10 +71,23 @@ private:
 	void AddHealth(int amount);
 	void AddScore(int amount);
 
-	//
+	//Popups
+	Point2f m_PopupPosition{};
+	Texture m_CurrPopupTexture{};
+	int m_ConsequtiveGoodHits{ 0 };
+	int m_ConsequtiveHitsForPopup{ 5 };
+	std::string m_PopupNames[g_PopupNamesArraySize]{ "wow.png", "test.png" };
+	float m_PopupSize{100};
+	float m_MinPopupSize{100};
+	float m_MaxPopupSize{500};
+	float m_PopupAccumulatedTime{0};
+	float m_PopupTimer{0};
+	float m_PopupTimerValue{0.5f};
+	bool m_IsPopupActive{};
+
+	//Multiplier
 	int m_Multiplier{1};
 	int m_MaxMultiplierFactor{99};
-	int m_ConsequtiveGoodHits{0};
 	float m_MultiplierCooldown{5.0f};
 	float m_MultiplierTimer{ m_MultiplierCooldown };
 
@@ -94,6 +110,8 @@ private:
 	void DrawPositiveFeedback();
 	void UpdateNegativeFeedback(float elapsedSec);
 	void DrawNegativeFeedback();
+	void UpdatePopups(float elapsedSec);
+	void DrawPopups();
 
 	//UtilFunctions
 	float GetDistance(const Point2f& point1, const Point2f& point2);

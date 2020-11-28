@@ -29,6 +29,8 @@ void MainGame::Draw()
 	DrawTexture(*GetTexture("Background.png"), Point2f(0, 0));
 	DrawDucks(m_DuckArray);
 	DrawBackgroundOverDucks();
+	DrawTimeBar();
+
 	DrawTrack();
 	DrawHealth();
 	DrawScore();
@@ -36,6 +38,7 @@ void MainGame::Draw()
 	DrawNegativeFeedback();
 	DrawMultiplier();
 	DrawMultiplierBubble();
+	DrawPopups();
 }
 
 void MainGame::Update(float elapsedSec) 
@@ -63,6 +66,7 @@ void MainGame::Update(float elapsedSec)
 	UpdateNegativeFeedback(elapsedSec);
 	UpdateMultiplier(elapsedSec);
 	UpdateMultiplierBubble(elapsedSec);
+	UpdatePopups(elapsedSec);
 }
 
 void MainGame::SpawnDuck()
@@ -117,18 +121,9 @@ void MainGame::CheckDucks()
 		PlaySoundEffect("place.wav");
 		AddHealth(-15);
 		m_Multiplier = 1;
+		m_ConsequtiveGoodHits = 0;
 		m_NegFeedback = true;
 	}
-
-	//if (m_DuckArray[1].value == 1)
-	//{
-	//	m_DuckArray[1].value = 0;
-	//	PlaySoundEffect("place.wav");
-	//	AddHealth(-5);
-	//	m_ConsequtiveGoodHits = 0;
-	//	m_Multiplier = 1;
-	//	m_NegFeedback = true;
-	//}
 }
 
 void MainGame::DrawTrack()
@@ -188,6 +183,15 @@ void MainGame::DrawDucks(const Duck array[])
 	}
 }
 
+void MainGame::DrawTimeBar() 
+{
+	float width{ (m_TrackWidth + (m_TrackLineThickness/2)) };
+	Rectf timeBar{ m_TrackPosition.x, m_TrackPosition.y + g_TrackHeight + 20, width - (width * (m_TotalLevelTime / GetEndSong())), 15};
+
+	SetColor(0.3f, 0.2f, 0.3f);
+	FillRect(timeBar);
+}
+
 void MainGame::CheckInput() 
 {
 	if (Input.keyUp == SDLK_z)
@@ -213,6 +217,7 @@ void MainGame::CheckInput()
 			m_PosFeedback = true;
 			PlaySoundEffect("beat.wav");
 			AddScore(rand() % 51);
+			m_ConsequtiveGoodHits++;
 			m_MultiplierTimer = m_MultiplierCooldown;
 			AddHealth(3);
 			m_ducksHit++;
@@ -220,6 +225,7 @@ void MainGame::CheckInput()
 		else 
 		{
 			m_NegFeedback = true;
+			m_ConsequtiveGoodHits = 0;
 			AddHealth(-5);
 			m_Multiplier = 1;
 			PlaySoundEffect("place.wav");
@@ -441,6 +447,49 @@ void MainGame::DrawBackgroundOverDucks()
 			const float yOffset{ m_CellSize / 2.0f };
 			SetColor(1, 0.5f, 0.5f, 0.5f);
 			FillEllipse(m_TrackPosition.x + xOffset + (2 * m_CellSize), m_TrackPosition.y + yOffset - (m_TrackLineThickness), m_NegRadius, m_NegRadius);
+		}
+	}
+	void MainGame::UpdatePopups(float elapsedSec) 
+	{
+		if (m_IsPopupActive)
+		{
+			m_PopupSize = (m_MaxPopupSize -m_MinPopupSize) * (m_PopupAccumulatedTime / m_PopupTimerValue) + m_MinPopupSize;
+			m_PopupAccumulatedTime += elapsedSec;
+			m_PopupTimer -= elapsedSec;
+			
+			if (m_PopupTimer <= 0)
+			{
+				m_IsPopupActive = false;
+				m_PopupTimer = m_PopupTimerValue;
+				m_PopupAccumulatedTime = 0;
+			}
+		}
+		else 
+		{
+			if (m_ConsequtiveGoodHits >= m_ConsequtiveHitsForPopup) 
+			{
+				m_ConsequtiveGoodHits = 0;
+				m_ConsequtiveHitsForPopup = rand() % 5 + 3;
+
+				float offset{ 100 };
+				m_CurrPopupTexture = *GetTexture(m_PopupNames[rand() % g_PopupNamesArraySize]);
+				float aspectRatioY{ m_CurrPopupTexture.height / m_CurrPopupTexture.width };
+				m_PopupSize = 100;
+				m_PopupPosition.x = rand() % int(g_WindowWidth - (m_MaxPopupSize + 2 * offset)) + offset;
+				m_PopupPosition.y = rand() % int(g_WindowHeight - (m_MaxPopupSize * aspectRatioY + 2 * offset + m_TrackPosition.x + m_CellSize)) + offset + m_TrackPosition.x + m_CellSize;
+				m_IsPopupActive = true;
+				m_PopupTimer = m_PopupTimerValue;
+
+			}
+		}
+	}
+	void MainGame::DrawPopups() 
+	{
+		if (m_IsPopupActive)
+		{
+			float aspectRatioY{ m_CurrPopupTexture.height / m_CurrPopupTexture.width };
+			Rectf destRect{ m_PopupPosition.x, m_PopupPosition.y, m_PopupSize, m_PopupSize * aspectRatioY };
+			DrawTexture(m_CurrPopupTexture, destRect);
 		}
 	}
 	#pragma endregion

@@ -137,6 +137,5 @@ float SettingsMenu::DrawSlider(float prev, Point2f pos, Point2f size) {
 			output = (Input.mousePos.x - pos.x) / size.x;
 		}
 	}
-	std::cout << output << '\n';
 	return output;
 }

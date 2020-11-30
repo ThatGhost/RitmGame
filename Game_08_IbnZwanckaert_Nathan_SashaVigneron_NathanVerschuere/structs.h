@@ -93,5 +93,16 @@ struct Ellipsef
 	float radiusY;
 };
 
+struct Grid
+{
+	float centerX;
+	float centerY;
+	float cellSize;
+	float tileOffset;
+	int columns;
+	int rows;
+	int amountOfCells;
+};
+
 
 

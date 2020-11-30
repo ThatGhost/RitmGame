@@ -8,6 +8,7 @@ extern INT8 g_Scene;
 extern irrklang::ISoundEngine* engine;
 extern LoseScreen g_LoseScreen;
 extern WinScreen  g_WinScreen;
+extern MainGame g_MainGame;
 
 float GetNextDuck() {
 	float next{};
@@ -23,6 +24,7 @@ bool NextStamp() {
 }
 
 void StartLevel(std::string& name) {
+	g_MainGame.Start();
 	g_Idx = 1;
 	g_TimeStamps.clear();
 	g_TimeStamps = ReadFileForfloat("SaveFiles/levels/"+name+"txt");

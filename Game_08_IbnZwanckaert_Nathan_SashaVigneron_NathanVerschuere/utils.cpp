@@ -491,6 +491,96 @@ namespace utils
 #pragma endregion textureImplementations
 
 
+#pragma region Grids
+	void DrawGrid(const Grid& grid)
+	{
+		float width = (grid.columns * (grid.cellSize + grid.tileOffset));
+		float height = (grid.rows * (grid.cellSize + grid.tileOffset));
+
+		for (int i = 0; i < grid.rows; i++)
+		{
+			for (int j = 0; j < grid.columns; j++)
+			{
+				if ((i * grid.columns) + (j + 1) > grid.amountOfCells) { return; }
+
+				Rectf currCell{ grid.centerX - (width / 2) + (j * (grid.cellSize + grid.tileOffset)), grid.centerY - (height / 2) + (i * (grid.cellSize + grid.tileOffset)), grid.cellSize, grid.cellSize };
+				FillRect(currCell);
+			}
+		}
+
+	}
+
+	bool isInsideGrid(const Grid& grid, const Point2f& point)
+	{
+		float width = (grid.columns * (grid.cellSize + grid.tileOffset));
+		float height = (grid.rows * (grid.cellSize + grid.tileOffset));
+		float left{ grid.centerX - (height / 2) };
+		float bottom{ grid.centerY - (width / 2) };
+
+		if (point.x >= left && point.x <= left + width)
+		{
+			if (point.y >= bottom && point.y <= bottom + height)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	int FindNearestGridCell(const Grid& grid, const Point2f& point)
+	{
+		int row{};
+		int column{};
+		Point2f position{ point };
+
+		//Translate to topleft of grid
+		float height = (grid.rows * (grid.cellSize + grid.tileOffset));
+		float width = (grid.columns * (grid.cellSize + grid.tileOffset));
+
+		position.x -= (grid.centerX - (width / 2));
+		position.y -= grid.centerY - (height / 2);
+
+		row = int(grid.rows - (position.y / grid.cellSize));
+		column = int((position.x / grid.cellSize));
+
+		return GetIndex(row, column, int(grid.columns));
+	}
+	Rectf GetCellRect(const Grid& grid, const Point2f& point)
+	{
+		Point2f position{ point };
+
+		//Translate to topleft of grid
+		float height = (grid.rows * (grid.cellSize + grid.tileOffset));
+		float width = (grid.columns * (grid.cellSize + grid.tileOffset));
+
+		position.x -= (grid.centerX - (width / 2));
+		position.y -= grid.centerY - (height / 2);
+
+		int row{ int((position.y / grid.cellSize)) };
+		int column{ int((position.x / grid.cellSize)) };
+
+		Rectf currCell{ grid.centerX - (width / 2) + (column * (grid.cellSize + grid.tileOffset)),
+			grid.centerY - (height / 2) + (row * (grid.cellSize + grid.tileOffset)),
+			grid.cellSize, grid.cellSize };
+		return currCell;
+	}
+	Rectf GetCellRect(const Grid& grid, int index)
+	{
+		float width = (grid.columns * (grid.cellSize + grid.tileOffset));
+		float height = (grid.rows * (grid.cellSize + grid.tileOffset));
+
+		int column{index % grid.columns };
+		int row{int(index / grid.columns)};
+
+		Rectf currCell{ grid.centerX - (width / 2) + (column * (grid.cellSize + grid.tileOffset)), grid.centerY - (height / 2) + (row * (grid.cellSize + grid.tileOffset)), grid.cellSize, grid.cellSize };
+		return currCell;
+	}
+	int GetIndex(int rowIdx, int collIdx, int nrCols)
+	{
+		return (rowIdx * nrCols + collIdx);
+	}
+#pragma endregion
+
+
 #pragma region CollisionFunctionality
 
 

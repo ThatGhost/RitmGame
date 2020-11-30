@@ -7,6 +7,7 @@ const int g_PopupNamesArraySize{ 2 };
 class MainGame
 {
 public:
+	void Start();
 	void Draw();
 	void Update(float elapsedSec);
 	void SpawnDuck();
@@ -16,6 +17,9 @@ public:
 	const float g_TrackHeight{ 100 };
 private:
 	//Vars
+	Grid m_MultiplierGrid{ 1280.0f/2 , 720.0f/2 + 40, 100, 10, 10, 4, 40 };
+	int* m_MultiplierGridArray{};
+
 	struct Duck {
 		int value;
 		float yOffset;
@@ -59,7 +63,7 @@ private:
 
 	//DrawFunctions
 	void DrawDucks(const Duck array[]);
-	void DrawGrid(Point2f startPos, float width, float height, int gridSize);
+	void DrawBeatCatcher(Point2f startPos, float width, float height, int gridSize);
 	void DrawTrack();
 	void DrawHealth();
 	void DrawScore();

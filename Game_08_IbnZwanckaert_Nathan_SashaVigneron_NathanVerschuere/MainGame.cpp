@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "MainGame.h"
 
 extern float g_WindowHeight;
 extern float g_WindowWidth;
@@ -10,6 +9,11 @@ using namespace utils;
 using namespace UI;
 
 #pragma region Game
+void MainGame::Start() 
+{
+	m_MultiplierGridArray = new int[m_MultiplierGrid.amountOfCells] {};
+}
+
 void MainGame::reset() {
 	for (size_t i = 0; i < g_DuckArraySize; i++)
 	{
@@ -27,6 +31,8 @@ void MainGame::reset() {
 void MainGame::Draw() 
 {
 	DrawTexture(*GetTexture("Background.png"), Point2f(0, 0));
+	SetColor(0.6f, 0.7f, 1, 0.1f);
+	DrawGrid(m_MultiplierGrid);
 	DrawDucks(m_DuckArray);
 	DrawBackgroundOverDucks();
 	DrawTimeBar();
@@ -55,6 +61,7 @@ void MainGame::Update(float elapsedSec)
 	{
 		g_Scene = 2;
 		EndSong(m_Score, float(m_ducksHit / m_totalDucks), AddEndScore(m_Score));
+		delete[] m_MultiplierGridArray;
 	}
 
 	UpdateDucks(elapsedSec);
@@ -135,7 +142,7 @@ void MainGame::DrawTrack()
 	DrawLine(m_TrackPosition.x + m_TrackWidth + (m_TrackLineThickness / 2), m_TrackPosition.y + g_TrackHeight, m_TrackPosition.x - (m_TrackLineThickness / 2), m_TrackPosition.y + g_TrackHeight, m_TrackLineThickness);
 	DrawLine(m_TrackPosition.x, m_TrackPosition.y + g_TrackHeight, m_TrackPosition.x, m_TrackPosition.y, m_TrackLineThickness);
 
-	DrawGrid(m_TrackPosition, m_TrackWidth, g_TrackHeight, m_GridSize);
+	DrawBeatCatcher(m_TrackPosition, m_TrackWidth, g_TrackHeight, m_GridSize);
 
 	const float duckSize{ 250 };
 	const Point2f duckPosition{ 10, -50 };
@@ -144,7 +151,7 @@ void MainGame::DrawTrack()
 	DrawTexture(*GetTexture("Duck1.png"), duckRect);
 }
 
-void MainGame::DrawGrid(Point2f startPos, float width, float height, int gridSize)
+void MainGame::DrawBeatCatcher(Point2f startPos, float width, float height, int gridSize)
 {
 	m_CellSize = width / gridSize;
 	m_DuckWidth = float(m_CellSize * 9 / 10);
@@ -259,6 +266,7 @@ void MainGame::DrawBackgroundOverDucks()
 		m_Health += amount;
 		if (m_Health <= 0) {
 			EndSong(m_Score,float(m_ducksHit/m_totalDucks));			
+			delete[] m_MultiplierGridArray;
 			g_Scene = 3;
 			m_Health = 0;
 		}
@@ -348,14 +356,19 @@ void MainGame::DrawBackgroundOverDucks()
 			else
 			{
 				float offset{ 100 };
-				m_MultiplierBubblePoint.x = rand() % int(g_WindowWidth - (2 * m_MultiplierBubbleRadius + 2 * offset)) + m_MultiplierBubbleRadius + offset;
-				m_MultiplierBubblePoint.y = rand() % int(g_WindowHeight - (2 * m_MultiplierBubbleRadius + 2 * offset) - (m_TrackPosition.x + m_CellSize)) + m_MultiplierBubbleRadius + offset + (m_TrackPosition.x + m_CellSize);
-				m_MultiplierBubbleRadius = float(rand() % 50 + 10);
+				int randomIdx = rand() % m_MultiplierGrid.amountOfCells;
+
+				Rectf rect{ GetCellRect(m_MultiplierGrid, randomIdx) };
+				FillRect(rect);
+				m_MultiplierBubblePoint.x = rect.left + m_MultiplierGrid.cellSize/2;
+				m_MultiplierBubblePoint.y = rect.bottom + m_MultiplierGrid.cellSize / 2;
+				m_MultiplierBubbleRadius = float(rand() % (int(m_MultiplierGrid.cellSize - 20)/2) + 20);
 				m_IsMultiplierBubbleShowing = true;
 				m_MultiplierBubbleTimer = float(rand() % 5 + 2);
 
 			}
 		}
+
 	}
 
 	void MainGame::DrawMultiplierBubble()

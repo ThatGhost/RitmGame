@@ -68,6 +68,15 @@ namespace utils
 	void DeleteTexture(Texture& texture);
 #pragma endregion TextureFunctionality
 
+#pragma region Grids
+	void DrawGrid(const Grid& grid);
+	bool isInsideGrid(const Grid& grid, const Point2f& point);
+	int FindNearestGridCell(const Grid& grid, const Point2f& point);
+	Rectf GetCellRect(const Grid& grid, const Point2f& point);
+	Rectf GetCellRect(const Grid& grid, int index);
+	int GetIndex(int rowIdx, int collIdx, int nrCols);
+#pragma endregion
+
 #pragma region CollisionFunctionality
 
 #pragma endregion CollisionFunctionality

@@ -17,7 +17,7 @@ void MainGame::Start()
 void MainGame::reset() {
 	for (size_t i = 0; i < g_DuckArraySize; i++)
 	{
-		m_DuckArray[i].value = 0;
+		m_DuckArray[i].isActive = 0;
 	}
 	m_Score = 0;
 	m_Multiplier = 1;
@@ -78,18 +78,17 @@ void MainGame::Update(float elapsedSec)
 
 void MainGame::SpawnDuck()
 {
-
 	int duckInt{};
 	for (int i = 0; i < g_DuckArraySize; i++)
 	{
-		if (m_DuckArray[i].value == 0) 
+		if (m_DuckArray[i].isActive == 0) 
 		{
 			duckInt = i;
 			break;
 		}
 	}
 
-	m_DuckArray[duckInt].value = 1;
+	m_DuckArray[duckInt].isActive = 1;
 	m_DuckArray[g_DuckArraySize - 1].yOffset = float(rand() % 20 - 5);
 	m_DuckArray[duckInt].position = Point2f(g_WindowWidth, m_TrackPosition.y - (m_TrackLineThickness / 2));
 }
@@ -99,7 +98,7 @@ void MainGame::UpdateDucks(float elapsedSec)
 {
 	for (int i = 0; i < g_DuckArraySize; i++)
 	{
-		if (m_DuckArray[i].value == 1) 
+		if (m_DuckArray[i].isActive == 1) 
 		{
 			m_DuckArray[i].position.x -= m_DuckSpeed * elapsedSec;
 		}
@@ -114,7 +113,7 @@ void MainGame::CheckDucks()
 	{
 		if (m_DuckArray[i].position.x + (m_DuckWidth / 4) < (m_TrackPosition.x + (m_CellSize * 2))) 
 		{
-			if (m_DuckArray[i].value == 1) 
+			if (m_DuckArray[i].isActive == 1) 
 			{
 				wasDuckInPlace = true;
 				duckInt = i;
@@ -124,7 +123,7 @@ void MainGame::CheckDucks()
 
 	if (wasDuckInPlace)
 	{
-		m_DuckArray[duckInt].value = 0;
+		m_DuckArray[duckInt].isActive = 0;
 		PlaySoundEffect("place.wav");
 		AddHealth(-15);
 		m_Multiplier = 1;
@@ -162,7 +161,7 @@ void MainGame::DrawBeatCatcher(Point2f startPos, float width, float height, int 
 		if (m_DuckArray[i].position.x >= (m_TrackPosition.x + (m_CellSize * 2) - (m_DuckWidth / 4))
 			&& m_DuckArray[i].position.x <= (m_TrackPosition.x + (m_CellSize * 3)) + (m_DuckWidth / 4))
 		{
-			if (m_DuckArray[i].value == 1)
+			if (m_DuckArray[i].isActive == 1)
 			{
 				wasDuckInPlace = true;
 			}
@@ -178,7 +177,7 @@ void MainGame::DrawDucks(const Duck array[])
 {
 	for (int i = 0; i < g_DuckArraySize; i++)
 	{
-		if (array[i].value == 1)
+		if (array[i].isActive == 1)
 		{
 			Rectf duckRect{ m_DuckArray[i].position.x,
 							m_DuckArray[i].position.y - (m_TrackLineThickness / 2) + m_DuckArray[i].yOffset,
@@ -210,7 +209,7 @@ void MainGame::CheckInput()
 			if (m_DuckArray[i].position.x >= (m_TrackPosition.x + (m_CellSize * 2) - (m_DuckWidth / 4))
 				&& m_DuckArray[i].position.x <= (m_TrackPosition.x + (m_CellSize * 3)) + (m_DuckWidth / 4))
 			{
-				if (m_DuckArray[i].value == 1) 
+				if (m_DuckArray[i].isActive == 1) 
 				{
 					wasDuckInPlace = true;
 					duckInt = i;
@@ -220,10 +219,10 @@ void MainGame::CheckInput()
 
 		if (wasDuckInPlace) 
 		{
-			m_DuckArray[duckInt].value = 0;
+			m_DuckArray[duckInt].isActive = 0;
 			m_PosFeedback = true;
 			PlaySoundEffect("beat.wav");
-			AddScore(rand() % 51);
+			AddScore(rand() % 21 + 30);
 			m_ConsequtiveGoodHits++;
 			m_MultiplierTimer = m_MultiplierCooldown;
 			AddHealth(3);
@@ -233,7 +232,7 @@ void MainGame::CheckInput()
 		{
 			m_NegFeedback = true;
 			m_ConsequtiveGoodHits = 0;
-			AddHealth(-5);
+			AddHealth(-15);
 			m_Multiplier = 1;
 			PlaySoundEffect("place.wav");
 		}
@@ -351,7 +350,7 @@ void MainGame::DrawBackgroundOverDucks()
 			if (m_IsMultiplierBubbleShowing)
 			{
 				m_IsMultiplierBubbleShowing = false;
-				m_MultiplierBubbleTimer = float(rand() % 10 + 2);
+				m_MultiplierBubbleTimer = float(rand() % 4 + 4);
 			}
 			else
 			{
@@ -364,8 +363,7 @@ void MainGame::DrawBackgroundOverDucks()
 				m_MultiplierBubblePoint.y = rect.bottom + m_MultiplierGrid.cellSize / 2;
 				m_MultiplierBubbleRadius = float(rand() % (int(m_MultiplierGrid.cellSize - 20)/2) + 20);
 				m_IsMultiplierBubbleShowing = true;
-				m_MultiplierBubbleTimer = float(rand() % 5 + 2);
-
+				m_MultiplierBubbleTimer = float(rand() % 3 + 3);
 			}
 		}
 

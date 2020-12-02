@@ -2,8 +2,6 @@
 const int g_DuckArraySize{ 10 };
 const int g_PopupNamesArraySize{ 2 };
 
-
-
 class MainGame
 {
 public:
@@ -21,7 +19,7 @@ private:
 	int* m_MultiplierGridArray{};
 
 	struct Duck {
-		int value;
+		bool isActive;
 		float yOffset;
 		Point2f position;
 	};
@@ -120,7 +118,6 @@ private:
 	//UtilFunctions
 	float GetDistance(const Point2f& point1, const Point2f& point2);
 	float GetRand(float min, float max);
-
 };
 
 class MainMenu

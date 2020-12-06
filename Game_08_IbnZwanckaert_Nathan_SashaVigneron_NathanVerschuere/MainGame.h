@@ -10,6 +10,7 @@ public:
 	void Update(float elapsedSec);
 	void SpawnDuck();
 	void reset();
+	void deleteArray();
 
 	float g_TimerValue{ 0.3f };
 	const float g_TrackHeight{ 100 };

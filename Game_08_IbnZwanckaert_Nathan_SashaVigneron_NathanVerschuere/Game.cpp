@@ -63,6 +63,7 @@ void Update(float elapsedSec)
 
 void End()
 {
+	g_MainGame.deleteArray();
 	DeleteGameAssets();
 }
 #pragma endregion gameFunctions

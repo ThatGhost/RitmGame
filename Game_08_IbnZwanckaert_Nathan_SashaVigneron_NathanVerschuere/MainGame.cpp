@@ -62,6 +62,7 @@ void MainGame::Update(float elapsedSec)
 		g_Scene = 2;
 		EndSong(m_Score, float(m_ducksHit / m_totalDucks), AddEndScore(m_Score));
 		delete[] m_MultiplierGridArray;
+		m_MultiplierGridArray = nullptr;
 	}
 
 	UpdateDucks(elapsedSec);
@@ -91,6 +92,12 @@ void MainGame::SpawnDuck()
 	m_DuckArray[duckInt].isActive = 1;
 	m_DuckArray[g_DuckArraySize - 1].yOffset = float(rand() % 20 - 5);
 	m_DuckArray[duckInt].position = Point2f(g_WindowWidth, m_TrackPosition.y - (m_TrackLineThickness / 2));
+}
+
+void MainGame::deleteArray() {
+	if (m_MultiplierGridArray == nullptr) return;
+	delete[] m_MultiplierGridArray;
+	m_MultiplierGridArray = nullptr;
 }
 
 //private functions
@@ -266,6 +273,7 @@ void MainGame::DrawBackgroundOverDucks()
 		if (m_Health <= 0) {
 			EndSong(m_Score,float(m_ducksHit/m_totalDucks));			
 			delete[] m_MultiplierGridArray;
+			m_MultiplierGridArray = nullptr;
 			g_Scene = 3;
 			m_Health = 0;
 		}
